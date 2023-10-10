@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "886143049332",
+    "project_id": "calorieguide-3ace2",
+    "storage_bucket": "calorieguide-3ace2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886143049332:android:b52c68cf760d42f7f77b21",
+        "android_client_info": {
+          "package_name": "com.example.calorieguide"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIzPgDzjlnK_byzJbqbMWL0UiA6fqmfTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
