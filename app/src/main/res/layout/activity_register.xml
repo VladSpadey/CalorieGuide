@@ -28,8 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:hint="@string/email"
-        android:layout_centerInParent="true"
-        android:padd="15dp">
+        android:layout_centerInParent="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_edit_text"

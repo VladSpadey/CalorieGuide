@@ -82,5 +82,17 @@
         app:cornerRadius="8dp"
         />
 
+    <TextView
+        android:id="@+id/TransferRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_a_new_account"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/light_gray"
+        android:layout_below="@id/btn_login"
+        android:layout_marginTop="75dp"
+        android:textSize="18sp"
+        />
+
 
 </RelativeLayout>
