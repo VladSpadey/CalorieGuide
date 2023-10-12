@@ -6,6 +6,8 @@
     <string name="password">Password</string>
     <string name="title_activity_register">empty</string>
     <string name="register">Register</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="create_a_new_account">Create a New Account</string>
 
 
 </resources>
