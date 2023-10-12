@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +21,7 @@ public class Register extends AppCompatActivity {
     private TextInputEditText inputEmail, inputPassword;
     private Button btnRegister;
     FirebaseAuth mAuth;
+    ProgressBar progressBar;
 
 
     @Override
@@ -30,11 +32,13 @@ public class Register extends AppCompatActivity {
         inputEmail = findViewById(R.id.email_edit_text);
         inputPassword = findViewById(R.id.password_edit_text);
         btnRegister = findViewById(R.id.btn_register);
+        progressBar = findViewById(R.id.progressBar);
 
         // Register Button Clicked -> Creates User
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 String email, password;
                 email = String.valueOf(inputEmail.getText());
                 password = String.valueOf(inputPassword.getText());
@@ -51,6 +55,7 @@ public class Register extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Your account has been created.",
                                             Toast.LENGTH_SHORT).show();
