@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ktx.Firebase;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_logout;
     TextView info;
     FirebaseUser user;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +30,18 @@ public class MainActivity extends AppCompatActivity {
         info = findViewById(R.id.user_info);
         user = auth.getCurrentUser();
 
+
+
         // If no active user, send them to Login view
         if(user == null){
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
         } else {
-            info.setText(user.getEmail());
+            info.setText(user.getUid());
         }
 
+        // Logout button pressed
         btn_logout.setOnClickListener(v ->{
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
