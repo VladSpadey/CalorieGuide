@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/caloriePage"
+        android:title="@string/calorie_intake"
+        android:icon="@drawable/baseline_food_bank_24"/>
+
+    <item
+
+        android:id="@+id/dashboardPage"
+        android:title="@string/dashboard"
+        android:icon="@drawable/baseline_space_dashboard_24" />
+
+    <item
+        android:id="@+id/weightPage"
+        android:title="@string/weight"
+        android:icon="@drawable/baseline_inbox_24"
+        />
+
+    <item
+        android:id="@+id/settingsPage"
+        android:title="@string/settings"
+        android:icon="@drawable/baseline_settings_24"
+        />
+
+</menu>
