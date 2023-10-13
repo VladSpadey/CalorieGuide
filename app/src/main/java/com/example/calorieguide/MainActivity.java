@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else {
             info.setText(user.getUid());
+            Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
+            startActivity(intent);
+            finish();
         }
 
         // Logout button pressed

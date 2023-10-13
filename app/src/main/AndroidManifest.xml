@@ -15,15 +15,21 @@
         android:theme="@style/Theme.CalorieGuide"
         tools:targetApi="31">
         <activity
+            android:name=".BMRCalculation"
+            android:exported="false" />
+        <activity
             android:name=".GetAdditionalInfo"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Register"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.CalorieGuide" />
         <activity
             android:name=".Login"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +39,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

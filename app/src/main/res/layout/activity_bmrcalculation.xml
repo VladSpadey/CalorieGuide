@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".GetAdditionalInfo"
+    android:orientation="horizontal"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp"
+    >
+
+    <TextView
+        android:id="@+id/getInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/how_active_are_you"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:layout_marginBottom="30dp"
+        android:fontFamily="sans-serif-light"
+        android:layout_above="@id/ActivityRadioGroup"/>
+
+    <RadioGroup
+        android:id="@+id/ActivityRadioGroup"
+        android:checkedButton="@+id/radio_button_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp"
+        >
+
+        <RadioButton
+            android:id="@+id/activity_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/couch_potato_little_to_no_exercise"
+            android:textColor="@color/white"
+            android:buttonTint="@color/accent"
+            android:textSize="16sp"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/activity_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/casual_exerciser_light_exercise_or_sports_1_3_days_a_week"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/activity_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/regular_exerciser_moderate_exercise_or_sports_3_5_days_a_week"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/activity_4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/fitness_enthusiast_hard_exercise_or_sports_6_7_days_a_week"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/activity_5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/athlete_or_active_worker_very_hard_exercise_physical_job_or_training_twice_a_day"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+    </RadioGroup>
+
+    <!-- Button-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_finish"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:text="@string/finish"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/ActivityRadioGroup"
+        app:backgroundTint="@color/accent"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        />
+
+
+</RelativeLayout>

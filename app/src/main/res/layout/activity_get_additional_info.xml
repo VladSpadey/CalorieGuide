@@ -33,11 +33,11 @@
         android:textSize="20sp"
         android:layout_marginBottom="10dp"
         android:fontFamily="sans-serif-light"
-        android:layout_above="@id/sexRadioGroup"
+        android:layout_above="@id/ActivitySexGroup"
         />
 
     <RadioGroup
-        android:id="@+id/sexRadioGroup"
+        android:id="@+id/ActivitySexGroup"
         android:checkedButton="@+id/radio_button_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         >
 
     <RadioButton
-        android:id="@+id/radio_button_1"
+        android:id="@+id/sex_male"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/male"
@@ -56,7 +56,7 @@
         android:buttonTint="@color/accent"
         android:textSize="16sp"/>
     <RadioButton
-        android:id="@+id/radio_button_2"
+        android:id="@+id/sex_female"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/female"
@@ -127,7 +127,7 @@
             android:id="@+id/weight_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
