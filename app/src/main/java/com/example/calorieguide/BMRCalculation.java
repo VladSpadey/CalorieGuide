@@ -1,13 +1,23 @@
 package com.example.calorieguide;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
 
 public class BMRCalculation extends AppCompatActivity {
     RadioGroup radioGroup;
@@ -15,6 +25,9 @@ public class BMRCalculation extends AppCompatActivity {
     Button finish;
     private int selectedIndex = 0;
     double bmr, activityBMR;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +35,8 @@ public class BMRCalculation extends AppCompatActivity {
         setContentView(R.layout.activity_bmrcalculation);
         Intent intent = getIntent();
         bmr = intent.getDoubleExtra("BMR", 0.0); // BMR calculated in the getAdditionalInfo
+
+
         addBtnListener();
     }
 
@@ -54,7 +69,9 @@ public class BMRCalculation extends AppCompatActivity {
                     break;
             }
             activityBMR = bmr * activityMultiplier;
-            activityBMR = (int) Math.round(activityBMR);
+            int newBMR = (int) Math.round(activityBMR);
+
+            updateUserBMR(newBMR);
 
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("activityBMR", activityBMR);
@@ -63,6 +80,29 @@ public class BMRCalculation extends AppCompatActivity {
 
         });
     }
+
+    private void updateUserBMR(int newBMR) {
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        assert user != null;
+        String uid = user.getUid(); // Get the UID from Firebase Authentication
+        DocumentReference userRef = db.collection("users").document(uid);
+
+        userRef.update("bmr", newBMR)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Weight is updated in Firestore
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Error updating bmr: " + e.getMessage());
+                    }
+                });
+    }
+
     private void  addListenerOnRadio() {
         // Gets selected Radio Button
         radioGroup = findViewById(R.id.ActivityRadioGroup);
