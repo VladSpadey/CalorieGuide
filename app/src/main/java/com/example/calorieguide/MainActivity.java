@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.view.Menu;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     TextView info;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    BottomNavigationView bottomNavigationMenuView = findViewById(R.id.bottom_navigation);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         btn_logout = findViewById(R.id.btn_logout);
         info = findViewById(R.id.user_info);
         user = auth.getCurrentUser();
+
+        bottomNavigationMenuView.inflateMenu(R.menu.bottom_navigation_menu);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         addUserToDB();
@@ -75,16 +82,18 @@ public class MainActivity extends AppCompatActivity {
     private void checkUserBMR() {
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");
-        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).whereEqualTo("bmi", false).get()
+        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).whereGreaterThan("bmr", 0).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
                             if(task.getResult().isEmpty()){
-                                Intent intent = new Intent(getApplicationContext(), Login.class);
+                                Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
                                 startActivity(intent);
                                 finish();
+                                Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
                             }
+                            // User Has BMR, stay on Main
                         } else {
                             Log.d("Firestore", "Error getting documents: ", task.getException());
                         }
