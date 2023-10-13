@@ -10,8 +10,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 public class GetAdditionalInfo extends AppCompatActivity {
     Button btn_next;
     RadioGroup sexRadioGroup;
@@ -74,7 +72,7 @@ public class GetAdditionalInfo extends AppCompatActivity {
 
     private String  addListenerOnSexRadio() {
         // Gets selected Radio Button
-        sexRadioGroup = findViewById(R.id.sexRadioGroup);
+        sexRadioGroup = findViewById(R.id.ActivitySexGroup);
         int selectedRadioID = sexRadioGroup.getCheckedRadioButtonId();
         sex = findViewById(selectedRadioID);
         if  (sex.getText().toString().equals("Male") || sex.getText().toString().equals("Female")){
