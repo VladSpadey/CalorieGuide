@@ -15,9 +15,11 @@
         android:theme="@style/Theme.CalorieGuide"
         tools:targetApi="31">
         <activity
+            android:name=".BMRCalculation"
+            android:exported="false" />
+        <activity
             android:name=".GetAdditionalInfo"
-            android:exported="false"
-            />
+            android:exported="false" />
         <activity
             android:name=".Register"
             android:exported="false"
@@ -34,7 +36,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

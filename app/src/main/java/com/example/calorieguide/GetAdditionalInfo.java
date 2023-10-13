@@ -2,6 +2,7 @@ package com.example.calorieguide;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,8 +62,11 @@ public class GetAdditionalInfo extends AppCompatActivity {
                     BMR = 88.362 + (13.397 * weightValue) + (4.799 * heightValue) - (5.677 * ageValue);
                 }
 
-                String bmrString = String.valueOf(BMR);
-                Toast.makeText(this, bmrString, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), BMRCalculation.class);
+                intent.putExtra("BMR", BMR);
+                startActivity(intent);
+                finish();
             }
 
         });
