@@ -5,10 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".ActivityMain"
+    tools:context=".MainActivity"
     android:orientation="vertical"
-    android:paddingLeft="40dp"
-    android:paddingRight="40dp"
     >
 
     <TextView
@@ -35,27 +33,26 @@
         android:textSize="18sp"
         app:cornerRadius="8dp"
         />
-    <FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/black"
-    tools:context=".Login"
-    android:orientation="vertical"
-    android:paddingLeft="40dp"
-    android:paddingRight="40dp">
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_logout"
-            android:layout_width="200dp"
-            android:layout_height="55dp"
-            android:text="@string/logout"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:backgroundTint="@color/accent"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="8dp"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom= "true"
+        >
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/bottom_navigation_menu"
+            android:elevation="@dimen/material_emphasis_high_type"
             />
-    </FrameLayout>
+
+    </RelativeLayout>
+
+
+
+
 </RelativeLayout>
+
 
 
