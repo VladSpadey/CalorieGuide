@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -19,14 +18,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ktx.Firebase;
 
 public class BMRCalculation extends AppCompatActivity {
     RadioGroup radioGroup;
-    RadioButton activity;
+    RadioGroup targetGroup;
     Button finish;
     private int selectedIndex = 0;
+    private int targetWeightIndex = 0;
     double bmr, activityBMR;
+    int newBMR;
     FirebaseAuth auth;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -71,50 +71,24 @@ public class BMRCalculation extends AppCompatActivity {
                     break;
             }
             activityBMR = bmr * activityMultiplier;
-            int newBMR = (int) Math.round(activityBMR);
+            newBMR = (int) Math.round(activityBMR);
 
-            updateUserBMR(newBMR);
-            showAlertDialog();
-
-            /*
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra("activityBMR", activityBMR);
+            updateUserDBValue("bmr", newBMR);
+            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
             startActivity(intent);
             finish();
-            */
+
         });
     }
 
-    private void showAlertDialog() {
-        // Ask user for their weight goal?
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.calorie_input_dialog, null);
-
-        Button btn_LoseWeight = view.findViewById(R.id.btn_loseWeight);
-        Button btn_MaintainWeight = view.findViewById(R.id.btn_maintainWeight);
-
-        alertDialogBuilder.setView(view);
-
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        btn_LoseWeight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(BMRCalculation.this, "Lose Weight", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        alertDialog.show();
-    }
-
-    private void updateUserBMR(int newBMR) {
+    private void updateUserDBValue(String value, int newValue) {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         assert user != null;
         String uid = user.getUid(); // Get the UID from Firebase Authentication
         DocumentReference userRef = db.collection("users").document(uid);
 
-        userRef.update("bmr", newBMR)
+        userRef.update(value, newValue)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -132,12 +106,8 @@ public class BMRCalculation extends AppCompatActivity {
     private void  addListenerOnRadio() {
         // Gets selected Radio Button
         radioGroup = findViewById(R.id.ActivityRadioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                selectedIndex = group.indexOfChild(findViewById(checkedId)); // Index of selected radio button
-            }
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            selectedIndex = group.indexOfChild(findViewById(checkedId)); // Index of selected radio button
         });
-
     }
 }

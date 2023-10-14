@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/round_corners_dialog"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:padding="25dp"
+    >
+
+    <TextView
+        android:id="@+id/txtYourTargetWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/what_is_your_target_weight_loss_per_week"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif-light"    />
+
+    <RadioGroup
+        android:id="@+id/radioGroupTargetWeight"
+        android:checkedButton="@+id/radio_button_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/txtYourTargetWeight"
+        >
+
+        <RadioButton
+            android:id="@+id/target_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/_0_25kg_per_week_n_6_5kg_in_6_months"
+            android:lineSpacingExtra="8dp"
+            android:textColor="@color/white"
+            android:buttonTint="@color/accent"
+            android:textSize="16sp"
+            android:padding="10dp"
+            />
+        <RadioButton
+            android:id="@+id/target_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/_0_5kg_per_week_n_13kg_in_6_months"
+            android:lineSpacingExtra="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/target_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/_0_75kg_per_week_n_19_5kg_in_6_months"
+            android:lineSpacingExtra="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+        <RadioButton
+            android:id="@+id/target_4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/_1kg_per_week_n_26kg_in_6_months"
+            android:lineSpacingExtra="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:buttonTint="@color/accent"
+            android:padding="10dp"/>
+    </RadioGroup>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_setTargetIntake"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:text="@string/next"
+        android:layout_below="@+id/radioGroupTargetWeight"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/accent"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        android:layout_marginTop="15dp"
+        />
+</RelativeLayout>

@@ -15,22 +15,25 @@
         android:theme="@style/Theme.CalorieGuide"
         tools:targetApi="31">
         <activity
+            android:name=".Dashboard"
+            android:exported="false" />
+        <activity
             android:name=".BMRCalculation"
             android:exported="false" />
         <activity
             android:name=".GetAdditionalInfo"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Register"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_register"
-            android:theme="@style/Theme.CalorieGuide" />
+            android:theme="@style/Theme.CalorieGuide"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Login"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
