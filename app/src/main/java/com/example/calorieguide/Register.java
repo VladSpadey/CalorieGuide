@@ -77,6 +77,7 @@ public class Register extends AppCompatActivity {
                     Toast.makeText(Register.this, "Please enter your password", Toast.LENGTH_SHORT).show();
                 }
 
+                // Creates User with Email and Password, throws to get additional info
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -85,7 +86,7 @@ public class Register extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Your account has been created.",
                                             Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
                                     startActivity(intent);
                                     finish();
                                 } else {

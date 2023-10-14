@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/dark" /> <!-- Set your desired background color -->
-    <corners android:radius="16dp" /> <!-- Adjust the radius as per your preference for rounded corners -->
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Layer 1: Rounded Top Corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:topLeftRadius="16dp" android:topRightRadius="16dp" />
+            <solid android:color="@color/dark" /> <!-- Set your desired background color -->
+        </shape>
+    </item>
+    <!-- Layer 2: Square Bottom Corners -->
+    <item android:bottom="16dp">
+        <shape android:shape="rectangle">
+            <corners android:topLeftRadius="16dp" android:topRightRadius="16dp" />
+            <solid android:color="@color/dark" /> <!-- Set your desired background color -->
+        </shape>
+    </item>
+</layer-list>
