@@ -50,7 +50,7 @@
         app:itemIconSize="27dp"
         app:itemTextAppearanceActive="@color/accent"
         android:paddingBottom="15dp"
-        app:elevation="md.sys.elevation.level2"
+        app:elevation="15dp"
         android:background="@drawable/rounded_corners_menu"
         />
 

@@ -3,9 +3,11 @@ package com.example.calorieguide;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -72,13 +74,37 @@ public class BMRCalculation extends AppCompatActivity {
             int newBMR = (int) Math.round(activityBMR);
 
             updateUserBMR(newBMR);
+            showAlertDialog();
 
+            /*
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("activityBMR", activityBMR);
             startActivity(intent);
             finish();
-
+            */
         });
+    }
+
+    private void showAlertDialog() {
+        // Ask user for their weight goal?
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.calorie_input_dialog, null);
+
+        Button btn_LoseWeight = view.findViewById(R.id.btn_loseWeight);
+        Button btn_MaintainWeight = view.findViewById(R.id.btn_maintainWeight);
+
+        alertDialogBuilder.setView(view);
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        btn_LoseWeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(BMRCalculation.this, "Lose Weight", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void updateUserBMR(int newBMR) {
@@ -92,7 +118,7 @@ public class BMRCalculation extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Weight is updated in Firestore
+                        // bmr is updated in Firestore
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

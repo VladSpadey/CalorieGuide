@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    // WEIGHT PAGE
 
     FirebaseAuth auth;
     Button btn_logout;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             // User Has BMR, stay on Main
                         } else {
                             Log.d("Firestore", "Error getting documents: ", task.getException());
+
                         }
                     }
                 });
