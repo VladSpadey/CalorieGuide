@@ -21,6 +21,7 @@
         android:textColor="@color/white"
          />
 
+    <!-- LogOut button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_logout"
         android:layout_width="200dp"
@@ -34,23 +35,24 @@
         app:cornerRadius="8dp"
         />
 
-    <RelativeLayout
+
+    <!-- Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom= "true"
-        >
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/bottom_navigation_menu"
-            android:elevation="@dimen/material_emphasis_high_type"
-            />
-
-    </RelativeLayout>
-
-
-
+        android:layout_height="90dp"
+        android:layout_gravity="start"
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="labeled"
+        android:layout_alignParentBottom="true"
+        app:itemTextColor="@color/light_gray"
+        app:itemIconTint="@color/accent"
+        app:itemIconSize="27dp"
+        app:itemTextAppearanceActive="@color/accent"
+        android:paddingBottom="15dp"
+        app:elevation="md.sys.elevation.level2"
+        android:background="@drawable/rounded_corners_menu"
+        />
 
 </RelativeLayout>
 

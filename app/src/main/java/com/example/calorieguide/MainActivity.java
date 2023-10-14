@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     TextView info;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    BottomNavigationView bottomNavigationMenuView = findViewById(R.id.bottom_navigation);
 
 
     @Override
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         info = findViewById(R.id.user_info);
         user = auth.getCurrentUser();
 
-        bottomNavigationMenuView.inflateMenu(R.menu.bottom_navigation_menu);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         addUserToDB();
