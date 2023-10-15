@@ -20,11 +20,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class Dashboard extends AppCompatActivity {
-    String uID, email;
+    String uID, uIDDB, email;
     Long bmr = 0L;
+    TextView userInfo;
 
     FirebaseAuth auth;
     FirebaseUser user;
@@ -38,13 +41,11 @@ public class Dashboard extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         assert user != null;
-        String uid = user.getUid();
+        uID = user.getUid();
+        userInfo = findViewById(R.id.user_info);
 
-        // get all values from db
+        // get all values from db and update UI
         getValuesFromDB();
-
-        TextView userInfo = findViewById(R.id.user_info);
-        userInfo.setText(String.format("Auth ID: %s \n id: %s \n email: %s \n bmr: %s", uid, uID, email, bmr));
     }
 
     private void getValuesFromDB() {
@@ -58,17 +59,23 @@ public class Dashboard extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Access data from the document
-                                email = document.getString("email");
+                                Map<String, Object> data = document.getData();
+                                uIDDB = (String) data.get("uid");
+                                email = (String) data.get("email");
+                                bmr = (Long) data.get("bmr");
+                                //Toast.makeText(Dashboard.this, data.toString(), Toast.LENGTH_LONG).show();
 
-                                // Now you have the email and weight values
-                                Log.d("Firestore", "Email: " + email);
-
-                                // Do something with the data (e.g., display it in your UI)
+                                updateUI();
                             }
                         } else {
                             Log.e("Firestore", "Error: " + task.getException().getMessage(), task.getException());
                         }
                     }
                 });
+    }
+
+    private void updateUI() {
+        userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uIDDB, email, bmr));
+        Toast.makeText(Dashboard.this, "email: " + email, Toast.LENGTH_LONG).show();
     }
 }
