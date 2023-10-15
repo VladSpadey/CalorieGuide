@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/round_corners_dialog"
     android:layout_marginStart="32dp"
@@ -47,5 +46,7 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:cornerRadius="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="10dp"
         />
 </RelativeLayout>
