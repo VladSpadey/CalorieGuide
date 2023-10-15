@@ -44,6 +44,8 @@
     <string name="_0_5kg_per_week_n_13kg_in_6_months">- 0.5kg per week\n(13kg in 6 months)</string>
     <string name="_0_75kg_per_week_n_19_5kg_in_6_months">- 0.75kg per week\n(19.5kg in 6 months)</string>
     <string name="_1kg_per_week_n_26kg_in_6_months">- 1kg per week \n(26kg in 6 months)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

@@ -1,5 +1,12 @@
 package com.example.calorieguide;
 
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,7 +31,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-public class Dashboard extends AppCompatActivity {
+public class DashboardFragment extends Fragment {
+
     String uID, uIDDB, email;
     Long bmr = 0L;
     TextView userInfo;
@@ -34,18 +42,19 @@ public class Dashboard extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        userInfo = view.findViewById(R.id.user_info);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         assert user != null;
         uID = user.getUid();
-        userInfo = findViewById(R.id.user_info);
 
         // get all values from db and update UI
         getValuesFromDB();
+
+        return view;
     }
 
     private void getValuesFromDB() {
@@ -63,7 +72,7 @@ public class Dashboard extends AppCompatActivity {
                                 uIDDB = (String) data.get("uid");
                                 email = (String) data.get("email");
                                 bmr = (Long) data.get("bmr");
-                                //Toast.makeText(Dashboard.this, data.toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getContext(), data.toString(), Toast.LENGTH_LONG).show();
 
                                 updateUI();
                             }
@@ -76,6 +85,6 @@ public class Dashboard extends AppCompatActivity {
 
     private void updateUI() {
         userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uIDDB, email, bmr));
-        Toast.makeText(Dashboard.this, "email: " + email, Toast.LENGTH_LONG).show();
+        Toast.makeText(requireContext(), "email: " + email, Toast.LENGTH_LONG).show();
     }
 }

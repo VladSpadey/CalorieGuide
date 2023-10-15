@@ -2,6 +2,9 @@ package com.example.calorieguide;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,21 +39,24 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     Button btn_logout;
-    TextView info;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FragmentManager fragmentManager;
+    DashboardFragment dashboardFragment = new DashboardFragment();
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        //NavController navController = Navigation.findNavController(this, R.id.fragment_container);
 
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(this);
 
         btn_logout = findViewById(R.id.btn_logout);
-        info = findViewById(R.id.user_info);
         user = auth.getCurrentUser();
 
 
@@ -64,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else {
             // Then App runs
-            info.setText(user.getUid());
             // Check if the user has completed BMR calculation
             checkUserBMR();
         }
@@ -92,9 +97,10 @@ public class MainActivity extends AppCompatActivity {
                                 finish();
                                 Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
                             } else {
-                                Intent intent = new Intent(getApplicationContext(), Dashboard.class);
-                                startActivity(intent);
-                                finish();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.fragment_container, dashboardFragment)
+                                        .addToBackStack(null) // Optional, for back navigation
+                                        .commit();
                             }
                             // User Has BMR, send to Dashboard
                         } else {

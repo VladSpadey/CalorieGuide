@@ -74,7 +74,7 @@ public class BMRCalculation extends AppCompatActivity {
             newBMR = (int) Math.round(activityBMR);
 
             updateUserDBValue("bmr", newBMR);
-            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
 
