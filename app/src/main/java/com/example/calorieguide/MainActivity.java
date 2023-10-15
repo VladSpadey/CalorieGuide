@@ -3,6 +3,8 @@ package com.example.calorieguide;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
+        //NavController navController = Navigation.findNavController(this, R.id.fragment_container);
 
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(this);
