@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     // WEIGHT PAGE
 
     FirebaseAuth auth;
-    Button btn_logout;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FragmentManager fragmentManager;
@@ -52,14 +53,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //NavController navController = Navigation.findNavController(this, R.id.fragment_container);
+
+
         fragmentManager = getSupportFragmentManager();
-        NavController navController = Navigation.findNavController(this, R.id.fragment_container);
-        navController.navigateUp();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
+            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            // Setup NavigationUI here
+        }
 
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(this);
 
-        btn_logout = findViewById(R.id.btn_logout);
         user = auth.getCurrentUser();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -74,16 +82,8 @@ public class MainActivity extends AppCompatActivity {
             // Then App runs
             // Check if the user has completed BMR calculation
             checkUserBMR();
-            getDashboardListener();
+            //getDashboardListener();
         }
-
-        // Logout button pressed
-        btn_logout.setOnClickListener(v ->{
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
-        });
     }
 
     private void getDashboardListener() {

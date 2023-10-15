@@ -88,6 +88,5 @@ public class DashboardFragment extends Fragment {
 
     private void updateUI() {
         userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uIDDB, email, bmr));
-        Toast.makeText(requireContext(), "email: " + email, Toast.LENGTH_LONG).show();
     }
 }
