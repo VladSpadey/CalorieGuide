@@ -1,10 +1,15 @@
 package com.example.calorieguide;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,35 +37,36 @@ public class Dashboard extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        assert user != null;
+        String uid = user.getUid();
 
         // get all values from db
-        getAllValuesFromDB();
+        getValuesFromDB();
 
         TextView userInfo = findViewById(R.id.user_info);
-        userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uID, email, bmr));
+        userInfo.setText(String.format("Auth ID: %s \n id: %s \n email: %s \n bmr: %s", uid, uID, email, bmr));
     }
 
-    private void getAllValuesFromDB() {
+    private void getValuesFromDB() {
         String uid = user.getUid();
-        DocumentReference docRef = db.collection("users").document(uid);
+        CollectionReference docRef = db.collection("users");
 
-        docRef.get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            // Document exists, retrieve values
-                            uID = document.getString("uid");
-                            bmr = document.getLong("bmr");
-                            email = document.getString("email");
+        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Access data from the document
+                                email = document.getString("email");
+
+                                // Now you have the email and weight values
+                                Log.d("Firestore", "Email: " + email);
+
+                                // Do something with the data (e.g., display it in your UI)
+                            }
                         } else {
-                            // Document does not exist for the given UID
-                        }
-                    } else {
-                        // Handle errors
-                        Exception e = task.getException();
-                        if (e != null) {
-                            // Handle the exception
+                            Log.e("Firestore", "Error: " + task.getException().getMessage(), task.getException());
                         }
                     }
                 });

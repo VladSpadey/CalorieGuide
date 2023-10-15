@@ -91,11 +91,14 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                                 Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
+                            } else {
+                                Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+                                startActivity(intent);
+                                finish();
                             }
-                            // User Has BMR, stay on Main
+                            // User Has BMR, send to Dashboard
                         } else {
                             Log.d("Firestore", "Error getting documents: ", task.getException());
-
                         }
                     }
                 });
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else {
                     // Handle the error if reading the document from Firestore fails
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
                 }
             }
         });
