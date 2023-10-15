@@ -9,6 +9,7 @@ import androidx.navigation.Navigation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.Menu;
@@ -50,15 +51,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         fragmentManager = getSupportFragmentManager();
-        //NavController navController = Navigation.findNavController(this, R.id.fragment_container);
+        NavController navController = Navigation.findNavController(this, R.id.fragment_container);
+        navController.navigateUp();
 
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(this);
 
         btn_logout = findViewById(R.id.btn_logout);
         user = auth.getCurrentUser();
-
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         addUserToDB();
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             // Then App runs
             // Check if the user has completed BMR calculation
             checkUserBMR();
+            getDashboardListener();
         }
 
         // Logout button pressed
@@ -80,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
+        });
+    }
+
+    private void getDashboardListener() {
+        Button nab_DashboardPage = findViewById(R.id.dashboardPage);
+        nab_DashboardPage.setOnClickListener(view -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.dashboardFragment);
         });
     }
 
