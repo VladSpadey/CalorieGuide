@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WeightFragment">
+    android:background="@color/black"
+    tools:context=".WeightFragment"
+    android:orientation="vertical" >
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/txtWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weight"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <!-- Add Weight button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_addWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:text="@string/add_data"
+        android:layout_below="@+id/txtWeight"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/accent"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="16dp"
+        />
+
+    <!-- Black Overlay -->
+    <View
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
+        android:background="#80000000"
+        android:visibility="gone"
+        />
+</RelativeLayout>

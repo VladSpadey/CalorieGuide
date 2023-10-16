@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     // WEIGHT PAGE
@@ -53,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         // Nav
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new DashboardFragment());
+        replaceFragment(new LogFragment());
         binding.navigation.setOnItemSelectedListener(item ->{
             if (item.getItemId() == R.id.logPage) {
-                //replaceFragment(new LearnFragment());
+                replaceFragment(new LogFragment());
             } else if (item.getItemId() == R.id.dashboardPage) {
                 replaceFragment(new DashboardFragment());
             } else if (item.getItemId() == R.id.weightPage) {
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                 variablesNotFetched = false;
                             }
                         } else {
-                            Log.e("Firestore", "Error: " + task.getException().getMessage(), task.getException());
+                            Log.e("Firestore", "Error: " + Objects.requireNonNull(task.getException()).getMessage(), task.getException());
                         }
                     }
                 });
