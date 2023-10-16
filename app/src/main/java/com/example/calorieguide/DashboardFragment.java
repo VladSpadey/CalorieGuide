@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +39,7 @@ public class DashboardFragment extends Fragment {
     String uID, uIDDB, email;
     Long bmr = 0L;
     TextView userInfo;
+    Boolean variablesNotFetched = true;
 
     FirebaseAuth auth;
     FirebaseUser user;
@@ -52,7 +56,8 @@ public class DashboardFragment extends Fragment {
         uID = user.getUid();
 
         // get all values from db and update UI
-        getValuesFromDB();
+        if(variablesNotFetched)
+            getValuesFromDB();
 
         return view;
     }
@@ -84,7 +89,8 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateUI() {
+        variablesNotFetched = false;
         userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uIDDB, email, bmr));
-        Toast.makeText(requireContext(), "email: " + email, Toast.LENGTH_LONG).show();
+        Toast.makeText(requireContext(), "Variables Update", Toast.LENGTH_SHORT).show();
     }
 }

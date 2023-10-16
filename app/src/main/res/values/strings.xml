@@ -46,6 +46,7 @@
     <string name="_1kg_per_week_n_26kg_in_6_months">- 1kg per week \n(26kg in 6 months)</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="change_password">Change Password</string>
 
 
 </resources>

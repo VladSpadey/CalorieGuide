@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/caloriePage"
+        android:id="@+id/logPage"
         android:title="@string/log"
         android:icon="@drawable/baseline_food_bank_24"
         />
