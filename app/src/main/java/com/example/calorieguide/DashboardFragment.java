@@ -35,15 +35,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
-
-    String uID, uIDDB, email;
-    Long bmr = 0L;
     TextView userInfo;
-    Boolean variablesNotFetched = true;
-
     FirebaseAuth auth;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    String uIDDB, email;
+    Long bmr;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,46 +49,22 @@ public class DashboardFragment extends Fragment {
         userInfo = view.findViewById(R.id.user_info);
 
         auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+
+        // get all values from mainActivity and update UI
+        MainActivity mainActivity = (MainActivity) getActivity();
+        assert mainActivity != null;
+        uIDDB = mainActivity.uIDDB;
+        email = mainActivity.email;
+        bmr = mainActivity.bmr;
+
+        user = mainActivity.user;
         assert user != null;
-        uID = user.getUid();
 
-        // get all values from db and update UI
-        if(variablesNotFetched)
-            getValuesFromDB();
-
+        updateUI();
         return view;
     }
 
-    private void getValuesFromDB() {
-        String uid = user.getUid();
-        CollectionReference docRef = db.collection("users");
-
-        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Access data from the document
-                                Map<String, Object> data = document.getData();
-                                uIDDB = (String) data.get("uid");
-                                email = (String) data.get("email");
-                                bmr = (Long) data.get("bmr");
-                                //Toast.makeText(getContext(), data.toString(), Toast.LENGTH_LONG).show();
-
-                                updateUI();
-                            }
-                        } else {
-                            Log.e("Firestore", "Error: " + task.getException().getMessage(), task.getException());
-                        }
-                    }
-                });
-    }
-
     private void updateUI() {
-        variablesNotFetched = false;
         userInfo.setText(String.format("id: %s \n email: %s \n bmr: %s", uIDDB, email, bmr));
-        Toast.makeText(requireContext(), "Variables Update", Toast.LENGTH_SHORT).show();
     }
 }

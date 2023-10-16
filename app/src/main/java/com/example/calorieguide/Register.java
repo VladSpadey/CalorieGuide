@@ -26,6 +26,7 @@ public class Register extends AppCompatActivity {
     private Button btnRegister;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
+    String email, password;
 
     public void onStart() {
         super.onStart();
@@ -51,52 +52,47 @@ public class Register extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         // Transfer to Login View Page Button
-        transferToLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
-                finish();
-            }
+        transferToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
         });
 
         // Register Button Clicked -> Creates User
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnRegister.setOnClickListener(v -> {
+            email = String.valueOf(inputEmail.getText());
+            password = String.valueOf(inputPassword.getText());
+
+            if ((TextUtils.isEmpty(email)) && (TextUtils.isEmpty(password))){
+                Toast.makeText(Register.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
+            } else if(TextUtils.isEmpty(email)) {
+                Toast.makeText(Register.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(password)){
+                Toast.makeText(Register.this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            } else {
                 progressBar.setVisibility(View.VISIBLE);
-                String email, password;
-                email = String.valueOf(inputEmail.getText());
-                password = String.valueOf(inputPassword.getText());
-
-                if ((TextUtils.isEmpty(email)) && (TextUtils.isEmpty(password))){
-                    Toast.makeText(Register.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
-                } else if(TextUtils.isEmpty(email)) {
-                    Toast.makeText(Register.this, "Please enter your email", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(password)){
-                    Toast.makeText(Register.this, "Please enter your password", Toast.LENGTH_SHORT).show();
-                }
-
-                // Creates User with Email and Password, throws to get additional info
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(Register.this, "Your account has been created.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(Register.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                register();
             }
+            // Creates User with Email and Password, throws to get additional info
+
         });
+    }
+
+    private void register() {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    progressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        Toast.makeText(Register.this, "Your account has been created.",
+                                Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(Register.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

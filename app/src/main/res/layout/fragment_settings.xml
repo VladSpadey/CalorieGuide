@@ -21,25 +21,48 @@
             android:layout_height="60dp"
             android:text="@string/change_password"
             android:layout_centerHorizontal="true"
-            android:layout_above="@+id/btn_logout"
-            app:backgroundTint="@color/dark"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="0dp"
-            />
-        <!-- LogOut button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginBottom="90dp"
-            android:text="@string/logout"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
             app:backgroundTint="@color/dark"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:cornerRadius="0dp"
             />
 
+        <!-- LogOut button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/logout"
+            android:layout_below="@+id/btn_changePassword"
+            android:layout_centerHorizontal="true"
+            app:backgroundTint="@color/dark"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:cornerRadius="0dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginBottom="-5dp"
+            />
+
+    <!-- LogOut button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_deleteUser"
+        android:layout_below="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/delete_user"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/dark"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="0dp"
+        />
+
+    <!-- Black Overlay -->
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        />
     </RelativeLayout>

@@ -5,37 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.view.Menu;
 
 import com.example.calorieguide.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.ktx.Firebase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     DashboardFragment dashboardFragment = new DashboardFragment();
     ActivityMainBinding binding;
 
+    String uIDDB, email;
+    Long bmr = 0L;
+    Boolean variablesNotFetched = true;
+    Boolean BMRchecked = false;
+
 
 
     @Override
@@ -61,14 +54,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new DashboardFragment());
-
         binding.navigation.setOnItemSelectedListener(item ->{
             if (item.getItemId() == R.id.logPage) {
                 //replaceFragment(new LearnFragment());
             } else if (item.getItemId() == R.id.dashboardPage) {
                 replaceFragment(new DashboardFragment());
             } else if (item.getItemId() == R.id.weightPage) {
-                //replaceFragment(new ProfileFragment());
+                replaceFragment(new WeightFragment());
             } else if (item.getItemId() == R.id.settingsPage){
                 replaceFragment(new SettingsFragment());
             }
@@ -79,20 +71,19 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
         user = auth.getCurrentUser();
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         addUserToDB();
 
         // If no active user, send them to Login view
-        if(user == null){
+        if (user == null) {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
         } else {
-            // Then App runs
-            // Check if the user has completed BMR calculation
-            checkUserBMR();
-            //getDashboardListener();
+            if(BMRchecked)
+                checkUserBMR();
+            if(variablesNotFetched)
+                getValuesFromDB();
         }
     }
 
@@ -104,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkUserBMR() {
+        BMRchecked = true;
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");
         Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).whereGreaterThan("bmr", 0).get()
@@ -166,5 +158,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void getValuesFromDB() {
+        // Gets values of the user from DB
+        String uid = user.getUid();
+        CollectionReference docRef = db.collection("users");
+
+        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Access data from the document
+                                Map<String, Object> data = document.getData();
+                                uIDDB = (String) data.get("uid");
+                                email = (String) data.get("email");
+                                bmr = (Long) data.get("bmr");
+                                variablesNotFetched = false;
+                            }
+                        } else {
+                            Log.e("Firestore", "Error: " + task.getException().getMessage(), task.getException());
+                        }
+                    }
+                });
     }
 }
