@@ -54,6 +54,11 @@
     <string name="delete_user">Delete User</string>
     <string name="close_button">Close Button</string>
     <string name="please_enter_your_password">Please enter your password</string>
+    <string name="add_weight">Add Weight</string>
+    <string name="add_data">Add Data</string>
+    <string name="update">Update</string>
+    <string name="kg">KG</string>
+    <string name="enter_your_weight">enter your weight</string>
 
 
 </resources>
