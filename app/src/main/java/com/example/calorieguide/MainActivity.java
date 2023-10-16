@@ -2,7 +2,9 @@ package com.example.calorieguide;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.view.Menu;
 
+import com.example.calorieguide.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FragmentManager fragmentManager;
     DashboardFragment dashboardFragment = new DashboardFragment();
+    ActivityMainBinding binding;
 
 
 
@@ -53,17 +57,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //NavController navController = Navigation.findNavController(this, R.id.fragment_container);
+        // Nav
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        replaceFragment(new DashboardFragment());
 
-
-        fragmentManager = getSupportFragmentManager();
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (navHostFragment != null) {
-            NavController navController = navHostFragment.getNavController();
-            BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
-            NavigationUI.setupWithNavController(bottomNavigationView, navController);
-            // Setup NavigationUI here
-        }
+        binding.navigation.setOnItemSelectedListener(item ->{
+            if (item.getItemId() == R.id.logPage) {
+                //replaceFragment(new LearnFragment());
+            } else if (item.getItemId() == R.id.dashboardPage) {
+                replaceFragment(new DashboardFragment());
+            } else if (item.getItemId() == R.id.weightPage) {
+                //replaceFragment(new ProfileFragment());
+            } else if (item.getItemId() == R.id.settingsPage){
+                replaceFragment(new SettingsFragment());
+            }
+            return true;
+        });
 
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(this);
@@ -86,12 +96,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getDashboardListener() {
-        Button nab_DashboardPage = findViewById(R.id.dashboardPage);
-        nab_DashboardPage.setOnClickListener(view -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigate(R.id.dashboardFragment);
-        });
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 
     private void checkUserBMR() {
@@ -108,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
                                 finish();
                                 Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
                             } else {
-                                fragmentManager.beginTransaction()
+                                /*fragmentManager.beginTransaction()
                                         .replace(R.id.fragment_container, dashboardFragment)
                                         .addToBackStack(null) // Optional, for back navigation
-                                        .commit();
+                                        .commit(); */
                             }
                             // User Has BMR, send to Dashboard
                         } else {
