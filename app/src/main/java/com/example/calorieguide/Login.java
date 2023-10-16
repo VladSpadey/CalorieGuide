@@ -23,6 +23,8 @@ public class Login extends AppCompatActivity {
     private TextView transferToRegister;
     private TextInputEditText inputEmail, inputPassword;
     private Button btnLogin;
+    String email, password;
+
     FirebaseAuth mAuth;
     ProgressBar progressBar;
 
@@ -57,8 +59,7 @@ public class Login extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
-            progressBar.setVisibility(View.VISIBLE);
-            String email, password;
+
             email = String.valueOf(inputEmail.getText());
             password = String.valueOf(inputPassword.getText());
 
@@ -68,26 +69,29 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Please enter your email", Toast.LENGTH_SHORT).show();
             } else if (TextUtils.isEmpty(password)){
                 Toast.makeText(Login.this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                signIn();
             }
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            progressBar.setVisibility(View.GONE);
-                            if (task.isSuccessful()) {
-                                Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Toast.makeText(Login.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
         });
+    }
 
+    private void signIn() {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressBar.setVisibility(View.GONE);
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(Login.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

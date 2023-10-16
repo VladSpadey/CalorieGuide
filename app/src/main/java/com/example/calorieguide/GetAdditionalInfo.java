@@ -42,7 +42,7 @@ public class GetAdditionalInfo extends AppCompatActivity {
             String sexString = addListenerOnSexRadio();
 
             // Validate inputs, then calculate BMR
-            if (weightString.isEmpty() || heightString.isEmpty() || ageString.isEmpty() || sexString.isEmpty()){ // Bug: Crushes when no sex selected
+            if (weightString.isEmpty() || heightString.isEmpty() || ageString.isEmpty() || sexString.equals("")){ // Bug: Crushes when no sex selected
                 Toast.makeText(this, "Please fill in all of the fields", Toast.LENGTH_SHORT).show();
             } else {
                 double BMR = 0; // Caloric Demand
