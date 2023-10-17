@@ -43,9 +43,6 @@ public class WeightFragment extends Fragment {
     addData = view.findViewById(R.id.btn_addWeight);
     addDataListener();
 
-
-
-
     return view;
     }
 
@@ -73,6 +70,7 @@ public class WeightFragment extends Fragment {
                 double weight = 0 ;
                 try {
                     weight = Double.parseDouble(input.getText().toString());
+                    addNewWeightToDB();
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
@@ -85,5 +83,9 @@ public class WeightFragment extends Fragment {
             alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
             alertDialog.show();
         });
+    }
+
+    private void addNewWeightToDB() {
+
     }
 }
