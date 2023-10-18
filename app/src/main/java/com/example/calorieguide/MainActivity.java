@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     String uIDDB, email;
     Long bmr = 0L;
     Boolean variablesNotFetched = true;
-    Boolean BMRchecked = false;
 
 
 
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         user = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        addUserToDB();
 
         // If no active user, send them to Login view
         if (user == null) {
@@ -91,35 +89,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
-    }
-
-    private void addUserToDB() {
-        String uid = user.getUid(); // Get the UID from Firebase Authentication
-        DocumentReference userRef = db.collection("users").document(uid);
-
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (!document.exists()) {
-                    // User does not exist in Firestore, create and save their information
-                    String email = user.getEmail();
-                    Map<String, Object> userMap = new HashMap<>();
-                    userMap.put("uid", uid);
-                    userMap.put("email", email);
-
-                    userRef.set(userMap)
-                            .addOnSuccessListener(aVoid -> {
-                                // UID and Email are saved in Firestore
-                            })
-                            .addOnFailureListener(e -> {
-                                // Handle the error if saving the UID in Firestore fails
-                            });
-                }
-            } else {
-                // Handle the error if reading the document from Firestore fails
-                Log.d("Firestore", "Error getting documents: ", task.getException());
-            }
-        });
     }
 
     private void getValuesFromDB() {

@@ -10,6 +10,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.calorieguide.Utils.dbUtil;
+
 public class GetAdditionalInfo extends AppCompatActivity {
     Button btn_next;
     RadioGroup sexRadioGroup;
@@ -51,15 +53,16 @@ public class GetAdditionalInfo extends AppCompatActivity {
                 double heightValue = Double.parseDouble(heightString);
                 double ageValue = Double.parseDouble(ageString);
 
+                dbUtil.addDoubleToDb("initialWeight", weightValue);
+                dbUtil.addDoubleToDb("height", heightValue);
+                dbUtil.addDoubleToDb("age", ageValue);
+                dbUtil.addStringToDb("sex", sexString);
+
                 if (sexString.equals("Female")){
-                    double weightMultiply = 9.247 * weightValue;
-                    double heightMultiply = 3.098 * heightValue;
-                    double ageMultiply = 4.330 * ageValue;
                     BMR = 447.593 + (9.247 * weightValue) + (3.098 * heightValue) - (4.330 * ageValue);
                 } else if (sexString.equals("Male")) {
                     BMR = 88.362 + (13.397 * weightValue) + (4.799 * heightValue) - (5.677 * ageValue);
                 }
-
 
                 Intent intent = new Intent(getApplicationContext(), BMRCalculation.class);
                 intent.putExtra("BMR", BMR);

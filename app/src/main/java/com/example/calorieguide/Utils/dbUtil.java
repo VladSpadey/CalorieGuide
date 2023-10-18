@@ -1,21 +1,27 @@
 package com.example.calorieguide.Utils;
 
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.calorieguide.GetAdditionalInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class dbUtil {
     static FirebaseAuth auth;
@@ -58,7 +64,27 @@ public class dbUtil {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Error updating bmr: " + e.getMessage());
+                        Log.e("Firestore", "Error adding double to db: " + e.getMessage());
+                    }
+                });
+    }
+    public static void addStringToDb(String field, String value) {
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        assert user != null;
+        String uid = user.getUid(); // Get the UID from Firebase Authentication
+        DocumentReference userRef = db.collection("users").document(uid);
+        userRef.update(field, value)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // bmr is updated in Firestore
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Error adding double to db: " + e.getMessage());
                     }
                 });
     }

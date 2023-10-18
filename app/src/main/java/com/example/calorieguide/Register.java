@@ -1,23 +1,26 @@
 package com.example.calorieguide;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Register extends AppCompatActivity {
 
@@ -27,6 +30,9 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progressBar;
     String email, password;
+    FirebaseUser user;
+    FirebaseAuth auth;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public void onStart() {
         super.onStart();
@@ -83,6 +89,7 @@ public class Register extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
+                        addUserToDB();
                         Toast.makeText(Register.this, "Your account has been created.",
                                 Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
@@ -94,5 +101,35 @@ public class Register extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    private void addUserToDB() {
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        String uid = user.getUid(); // Get the UID from Firebase Authentication
+        DocumentReference userRef = db.collection("users").document(uid);
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (!document.exists()) {
+                    // User does not exist in Firestore, create and save their information
+                    String email = user.getEmail();
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put("uid", uid);
+                    userMap.put("email", email);
+
+                    userRef.set(userMap)
+                            .addOnSuccessListener(aVoid -> {
+                                // UID and Email are saved in Firestore
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle the error if saving the UID in Firestore fails
+                            });
+                }
+            } else {
+                // Handle the error if reading the document from Firestore fails
+                Log.d("Firestore", "Error getting documents: ", task.getException());
+            }
+        });
     }
 }

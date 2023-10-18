@@ -71,7 +71,7 @@ public class WeightFragment extends Fragment {
                 double weight = 0 ;
                 try {
                     weight = Double.parseDouble(input.getText().toString());
-                    dbUtil.addDoubleToDb("weight", weight);
+                    dbUtil.addWeightToDb(weight);
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
