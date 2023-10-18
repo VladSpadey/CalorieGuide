@@ -58,7 +58,7 @@ public class BMRCalculation extends AppCompatActivity {
             activityBMR = bmr * activityMultiplier;
             newBMR = (int) Math.round(activityBMR);
 
-            dbUtil.addValueToDb("bmr", newBMR);
+            dbUtil.addIntToDb("activityBmr", newBMR);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

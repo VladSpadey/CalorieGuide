@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     String uIDDB, email;
     Long bmr = 0L;
     Boolean variablesNotFetched = true;
-    Boolean BMRchecked = false;
 
 
 
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         user = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        addUserToDB();
 
         // If no active user, send them to Login view
         if (user == null) {
@@ -81,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            if(BMRchecked)
-                checkUserBMR();
             if(variablesNotFetched)
                 getValuesFromDB();
         }
@@ -93,72 +89,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
-    }
-
-    private void checkUserBMR() {
-        BMRchecked = true;
-        String uid = user.getUid();
-        CollectionReference docRef = db.collection("users");
-        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).whereGreaterThan("bmr", 0).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().isEmpty()){
-                                Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
-                                startActivity(intent);
-                                finish();
-                                Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
-                            } else {
-                                /*fragmentManager.beginTransaction()
-                                        .replace(R.id.fragment_container, dashboardFragment)
-                                        .addToBackStack(null) // Optional, for back navigation
-                                        .commit(); */
-                            }
-                            // User Has BMR, send to Dashboard
-                        } else {
-                            Log.d("Firestore", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
-
-    private void addUserToDB() {
-        String uid = user.getUid(); // Get the UID from Firebase Authentication
-        DocumentReference userRef = db.collection("users").document(uid);
-
-        ((DocumentReference) userRef).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (!document.exists()) {
-                        // User does not exist in Firestore, create and save their information
-                        String email = user.getEmail();
-                        Map<String, Object> userMap = new HashMap<>();
-                        userMap.put("uid", uid);
-                        userMap.put("email", email);
-
-                        userRef.set(userMap)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // UID and Email are saved in Firestore
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Handle the error if saving the UID in Firestore fails
-                                    }
-                                });
-                    }
-                } else {
-                    // Handle the error if reading the document from Firestore fails
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
     }
 
     private void getValuesFromDB() {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.example.calorieguide.Utils.dbUtil;
 
 
 public class WeightFragment extends Fragment {
@@ -70,7 +71,7 @@ public class WeightFragment extends Fragment {
                 double weight = 0 ;
                 try {
                     weight = Double.parseDouble(input.getText().toString());
-                    addNewWeightToDB();
+                    dbUtil.addWeightToDb(weight);
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
