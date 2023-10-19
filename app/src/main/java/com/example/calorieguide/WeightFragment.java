@@ -32,6 +32,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.calorieguide.Utils.dbUtil;
 import com.anychart.graphics.vector.Stroke;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 public class WeightFragment extends Fragment {
@@ -39,6 +42,9 @@ public class WeightFragment extends Fragment {
     String uID, email;
     Button addData;
     View overlay;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseAuth auth;
+    List<DataEntry> seriesData;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +62,7 @@ public class WeightFragment extends Fragment {
         overlay = view.findViewById(R.id.overlay);
 
         // Chart
-        setupChart(view);
+        getDBValues(view);
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
@@ -65,7 +71,26 @@ public class WeightFragment extends Fragment {
         return view;
     }
 
-    private void setupChart(View view) {
+    private void getDBValues(View view) {
+        CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
+        weightCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            seriesData = new ArrayList<>();
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                // Extract data from each document
+                String date = document.getString("date");  // Replace "date" with the field name in your Firestore document
+                double weight = document.getDouble("weight"); // Replace "weight" with the field name in your Firestore document
+                Toast.makeText(getContext(), date + ", " + weight, Toast.LENGTH_SHORT).show();
+
+                // Create a data entry and add it to the series data
+                seriesData.add(new ValueDataEntry(date, weight));
+            }
+
+            // After fetching all the data, update the chart with the new data
+            setupChart(view, seriesData);
+        });
+    }
+
+    private void setupChart(View view, List<DataEntry> data) {
         AnyChartView anyChartView = view.findViewById(R.id.weight_chart_view);
         anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
         anyChartView.setBackgroundColor("#111111");
@@ -86,32 +111,8 @@ public class WeightFragment extends Fragment {
         cartesian.yAxis(0).labels().padding(-20d, 0d, 0d, -5d);
         cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
 
-        List<DataEntry> seriesData = new ArrayList<>();
-        seriesData.add(new ValueDataEntry("Oct 1", 100));
-        seriesData.add(new ValueDataEntry("Oct 2", 99.5));
-        seriesData.add(new ValueDataEntry("Oct 3", 99.6));
-        seriesData.add(new ValueDataEntry("Oct 4", 98));
-        seriesData.add(new ValueDataEntry("Oct 5", 97.6));
-        seriesData.add(new ValueDataEntry("Oct 6", 98.9));
-        seriesData.add(new ValueDataEntry("Oct 9", 100));
-        seriesData.add(new ValueDataEntry("Oct 10", 99.9));
-        seriesData.add(new ValueDataEntry("Oct 11", 99));
-        seriesData.add(new ValueDataEntry("Oct 12", 97.7));
-        seriesData.add(new ValueDataEntry("Oct 13", 96));
-        seriesData.add(new ValueDataEntry("Oct 17", 95));
-        seriesData.add(new ValueDataEntry("Oct 18", 95.5));
-        seriesData.add(new ValueDataEntry("Oct 19", 94.4));
-        seriesData.add(new ValueDataEntry("Oct 20", 92.3));
-        seriesData.add(new ValueDataEntry("Oct 21", 91.9));
-        seriesData.add(new ValueDataEntry("Oct 25", 91.8));
-        seriesData.add(new ValueDataEntry("Oct 30", 91.1));
-        seriesData.add(new ValueDataEntry("Nov 5", 90));
-        seriesData.add(new ValueDataEntry("Nov 8", 87.5));
-        seriesData.add(new ValueDataEntry("Nov 16", 85));
-
-
         Set set = Set.instantiate();
-        set.data(seriesData);
+        set.data(data);
         Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
 
         Line series1 = cartesian.line(series1Mapping);

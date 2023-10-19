@@ -23,8 +23,8 @@
         android:id="@+id/layout_weight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/round_corners_dialog"
         android:layout_below="@id/txtWeight"
         android:layout_marginTop="25dp">
@@ -32,7 +32,7 @@
         <com.anychart.AnyChartView
             android:id="@+id/weight_chart_view"
             android:layout_width="match_parent"
-            android:layout_height="290dp"
+            android:layout_height="250dp"
             android:layout_marginTop="25dp"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
