@@ -42,9 +42,11 @@ public class WeightFragment extends Fragment {
     String uID, email;
     Button addData;
     View overlay;
+    AnyChartView anyChartView;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     static FirebaseAuth auth;
     List<DataEntry> seriesData;
+    private boolean isChartLoading = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +63,31 @@ public class WeightFragment extends Fragment {
         email = mainActivity.email;
         overlay = view.findViewById(R.id.overlay);
 
+        if (!isChartLoading) {
+            // Start loading your chart data
+            isChartLoading = true;
+            getDBValues(view); // Replace with your chart setup logic
+        }
+
         // Chart
-        getDBValues(view);
+       // getDBValues(view);
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener();
+        addDataListener(view);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Cancel loading if the fragment is destroyed while the chart is loading
+        if (isChartLoading) {
+            isChartLoading = false;
+            anyChartView = null;
+            // Cancel loading logic (e.g., cancel network requests)
+        }
     }
 
     private void getDBValues(View view) {
@@ -79,8 +98,6 @@ public class WeightFragment extends Fragment {
                 // Extract data from each document
                 String date = document.getString("date");  // Replace "date" with the field name in your Firestore document
                 double weight = document.getDouble("weight"); // Replace "weight" with the field name in your Firestore document
-                Toast.makeText(getContext(), date + ", " + weight, Toast.LENGTH_SHORT).show();
-
                 // Create a data entry and add it to the series data
                 seriesData.add(new ValueDataEntry(date, weight));
             }
@@ -91,47 +108,51 @@ public class WeightFragment extends Fragment {
     }
 
     private void setupChart(View view, List<DataEntry> data) {
-        AnyChartView anyChartView = view.findViewById(R.id.weight_chart_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
-        anyChartView.setBackgroundColor("#111111");
+        if (anyChartView != null)
+            anyChartView.invalidate();
+        if(isChartLoading){
+            anyChartView = view.findViewById(R.id.weight_chart_view);
+            anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
+            anyChartView.setBackgroundColor("#111111");
 
-        Cartesian cartesian = AnyChart.line();
+            Cartesian cartesian = AnyChart.line();
 
-        cartesian.padding(10d, 20d, 5d, 20d);
+            cartesian.padding(10d, 20d, 5d, 20d);
 
-        cartesian.crosshair().enabled(true);
-        cartesian.crosshair()
-                .yLabel(true)
-                .yStroke((Stroke) null, null, null, (String) null, (String) null);
+            cartesian.crosshair().enabled(true);
+            cartesian.crosshair()
+                    .yLabel(true)
+                    .yStroke((Stroke) null, null, null, (String) null, (String) null);
 
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-        cartesian.background().fill("#111111");
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+            cartesian.background().fill("#111111");
 
-        cartesian.yAxis(0).title("Weight (kg)");
-        cartesian.yAxis(0).labels().padding(-20d, 0d, 0d, -5d);
-        cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
+            cartesian.yAxis(0).title("Weight (kg)");
+            cartesian.yAxis(0).labels().padding(0d, 0d, 0d, 0d);
+            cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
 
-        Set set = Set.instantiate();
-        set.data(data);
-        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+            Set set = Set.instantiate();
+            set.data(data);
+            Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
 
-        Line series1 = cartesian.line(series1Mapping);
-        series1.name("Weight");
-        series1.legendItem().enabled(false);
-        series1.hovered().markers().enabled(true);
-        series1.markers().enabled(true);
-        series1.stroke("#f77f00");
+            Line series1 = cartesian.line(series1Mapping);
+            series1.name("Weight");
+            series1.legendItem().enabled(false);
+            series1.hovered().markers().enabled(true);
+            series1.markers().enabled(true);
+            series1.stroke("#f77f00");
 
 
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
+            cartesian.legend().enabled(true);
+            cartesian.legend().fontSize(13d);
+            cartesian.legend().padding(0d, 0d, 10d, 0d);
 
-        anyChartView.setChart(cartesian);
+            anyChartView.setChart(cartesian);
+        }
     }
 
 
-    private void addDataListener() {
+    private void addDataListener(View mainView) {
         addData.setOnClickListener(v -> {
             // Show Dialog
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
@@ -156,17 +177,12 @@ public class WeightFragment extends Fragment {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getContext(), "Weight " + weight, Toast.LENGTH_SHORT).show();
+                getDBValues(mainView);
                 alertDialog.dismiss();
-
             });
 
             alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
             alertDialog.show();
         });
-    }
-
-    private void addNewWeightToDB() {
-
     }
 }
