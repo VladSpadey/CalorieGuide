@@ -88,6 +88,24 @@ public class dbUtil {
                     }
                 });
     }
+    public static void addWeightToDb(double weight){
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
+        Map<String, Object> weightData = new HashMap<>();
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        weightData.put("weight", weight);
+        weightData.put("date", currentDate);
+        CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
+        DocumentReference weightDocumentRef = weightCollectionRef.document(currentDate);
+        weightDocumentRef.set(weightData)
+                .addOnSuccessListener(documentReference -> {
+                    // Data added successfully
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error in case of failure
+                });
+    }
     private void checkUserBMR() {
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");

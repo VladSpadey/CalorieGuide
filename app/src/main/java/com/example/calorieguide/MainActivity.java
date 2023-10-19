@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                 Map<String, Object> data = document.getData();
                                 uIDDB = (String) data.get("uid");
                                 email = (String) data.get("email");
-                                bmr = (Long) data.get("bmr");
+                                bmr = (Long) data.get("activityBmr");
                                 variablesNotFetched = false;
                             }
                         } else {
