@@ -63,7 +63,7 @@
     <string name="change_height">Change Height</string>
     <string name="change_age">Change Age</string>
     <string name="your_current_bmi">Your current BMI:</string>
-    <string name="your_body_mass_weight_bmi_is">Your Body Mass Weight (BMI) is</string>
+    <string name="your_body_mass_weight_bmi_is">Your Body Mass Index (BMI) is</string>
     <string name="your_approximate_bmr">Your approximate BMR:</string>
     <string name="bmr_description">If you consume less calories than your Basal Metabolic Rate (BMR) combined with your activity level per day, you will lose weight. If you consume more calories than that, you will gain weight instead.</string>
     <string name="category">Category:</string>

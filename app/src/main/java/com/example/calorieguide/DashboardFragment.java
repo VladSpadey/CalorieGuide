@@ -37,6 +37,8 @@ public class DashboardFragment extends Fragment {
     Long bmr;
     double weight, height;
     String formattedBMI;
+    private boolean isChartLoading = false;
+    AnyChartView anyChartView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,69 +66,87 @@ public class DashboardFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Cancel loading if the fragment is destroyed while the chart is loading
+        if (isChartLoading) {
+            isChartLoading = false;
+            anyChartView = null;
+        }
+    }
+
     private void setupBMI(View view) {
         double bmi = calculateBMI();
         TextView bmiText = view.findViewById(R.id.dashboard_txtBMI);
         TextView bmiTextCategory = view.findViewById(R.id.dashboard_txtBMICategory);
 
         formattedBMI = df.format(bmi);
-        bmiText.setText("Your Body Mass Weight (BMI) is: " + formattedBMI);
+        bmiText.setText("Your Body Mass Index (BMI) is: " + formattedBMI);
 
         String category = getCategory(bmi);
         bmiTextCategory.setText("Category: " + category);
 
         getToHealthyWeight(view, category, bmi);
-        setupBMIChart(view);
+        if (!isChartLoading) {
+            // Start loading chart data
+            isChartLoading = true;
+            setupBMIChart(view);
+        }
+
     }
 
     private void setupBMIChart(View view) {
-        AnyChartView anyChartView = view.findViewById(R.id.bmi_chart_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
-        LinearGauge linearGauge = AnyChart.linear();
+        if (isChartLoading){
+            anyChartView = view.findViewById(R.id.bmi_chart_view);
+            anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
+            LinearGauge linearGauge = AnyChart.linear();
 
-        double marker = Double.parseDouble(formattedBMI);
+            double marker = Double.parseDouble(formattedBMI);
 
-        linearGauge.data(new SingleValueDataSet(new Double[] { marker }));
+            linearGauge.data(new SingleValueDataSet(new Double[] { marker }));
 
-        linearGauge.layout(Layout.HORIZONTAL);
+            linearGauge.layout(Layout.HORIZONTAL);
 
-        OrdinalColor scaleBarColorScale = OrdinalColor.instantiate();
-        scaleBarColorScale.ranges(new String[]{
-                "{ from: 0, to: 17, color: ['red 0.5'] }",
-                "{ from: 17, to: 18.5, color: ['yellow 0.75'] }",
-                "{ from: 18.5, to: 25, color: ['green 0.75'] }",
-                "{ from: 25, to: 30, color: ['yellow 0.75'] }",
-                "{ from: 30, to: 35, color: ['red 0.75'] }",
-                "{ from: 35, to: 40, color: ['red 0.5'] }"
-        });
+            OrdinalColor scaleBarColorScale = OrdinalColor.instantiate();
+            scaleBarColorScale.ranges(new String[]{
+                    "{ from: 0, to: 17, color: ['red 0.5'] }",
+                    "{ from: 17, to: 18.5, color: ['yellow 0.75'] }",
+                    "{ from: 18.5, to: 25, color: ['green 0.75'] }",
+                    "{ from: 25, to: 30, color: ['yellow 0.75'] }",
+                    "{ from: 30, to: 35, color: ['red 0.75'] }",
+                    "{ from: 35, to: 40, color: ['red 0.5'] }"
+            });
 
-        linearGauge.scaleBar(0)
-                .width("25%")
-                .colorScale(scaleBarColorScale);
+            linearGauge.scaleBar(0)
+                    .width("25%")
+                    .colorScale(scaleBarColorScale);
 
-        linearGauge.marker(0)
-                .type(MarkerType.TRIANGLE_DOWN)
-                .color("white")
-                .zIndex(15);
+            linearGauge.marker(0)
+                    .type(MarkerType.TRIANGLE_DOWN)
+                    .color("white")
+                    .zIndex(15);
 
-        linearGauge.scale()
-                .minimum(0)
-                .maximum(40);
+            linearGauge.scale()
+                    .minimum(0)
+                    .maximum(40);
 
-        linearGauge.axis(0)
-                .minorTicks(false)
-                .width("1%");
-        linearGauge.axis(0)
-                .offset("-1.5%")
-                .orientation(Orientation.TOP)
-                .labels("top");
+            linearGauge.axis(0)
+                    .minorTicks(false)
+                    .width("1%");
+            linearGauge.axis(0)
+                    .offset("-1.5%")
+                    .orientation(Orientation.TOP)
+                    .labels("top");
 
-        linearGauge.padding(0, 15, 0, 15);
-        linearGauge.background().enabled(true);
-        linearGauge.background().fill("#111111");
+            linearGauge.padding(0, 15, 0, 15);
+            linearGauge.background().enabled(true);
+            linearGauge.background().fill("#111111");
 
-        anyChartView.setChart(linearGauge);
-    }
+            anyChartView.setChart(linearGauge);
+        }
+        }
+
 
 
     private void getToHealthyWeight(View view, String category, double bmi) {
