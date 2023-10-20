@@ -32,6 +32,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.calorieguide.Utils.dbUtil;
 import com.anychart.graphics.vector.Stroke;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 public class WeightFragment extends Fragment {
@@ -39,6 +42,11 @@ public class WeightFragment extends Fragment {
     String uID, email;
     Button addData;
     View overlay;
+    AnyChartView anyChartView;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseAuth auth;
+    List<DataEntry> chartData;
+    private boolean isChartLoading = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,82 +63,98 @@ public class WeightFragment extends Fragment {
         email = mainActivity.email;
         overlay = view.findViewById(R.id.overlay);
 
+        if (!isChartLoading) {
+            // Start loading your chart data
+            isChartLoading = true;
+            getDBValues(view); // Replace with your chart setup logic
+        }
+
         // Chart
-        setupChart(view);
+       // getDBValues(view);
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener();
+        addDataListener(view);
 
         return view;
     }
 
-    private void setupChart(View view) {
-        AnyChartView anyChartView = view.findViewById(R.id.weight_chart_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
-        anyChartView.setBackgroundColor("#111111");
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Cancel loading if the fragment is destroyed while the chart is loading
+        if (isChartLoading) {
+            isChartLoading = false;
+            anyChartView = null;
+            // Cancel loading logic (e.g., cancel network requests)
+        }
+    }
 
-        Cartesian cartesian = AnyChart.line();
+    private void getDBValues(View view) {
+        CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
+        weightCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            chartData = new ArrayList<>();
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                // Extract data from each document
+                String date = document.getString("date");  // Replace "date" with the field name in your Firestore document
+                double weight = document.getDouble("weight"); // Replace "weight" with the field name in your Firestore document
+                // Create a data entry and add it to the series data
+                chartData.add(new ValueDataEntry(date, weight));
+            }
 
-        cartesian.padding(10d, 20d, 5d, 20d);
+            // After fetching all the data, update the chart with the new data
+            setupChart(view, chartData);
+            isChartLoading = true;
+        });
+    }
 
-        cartesian.crosshair().enabled(true);
-        cartesian.crosshair()
-                .yLabel(true)
-                .yStroke((Stroke) null, null, null, (String) null, (String) null);
+    private void setupChart(View view, List<DataEntry> data) {
+        if(isChartLoading){
+            anyChartView = view.findViewById(R.id.weight_chart_view);
+            anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
+            anyChartView.setBackgroundColor("#111111");
 
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-        cartesian.background().fill("#111111");
+            if (anyChartView != null)
+                anyChartView.invalidate(); // Chart is supposed to be redrawn after this point
 
-        cartesian.yAxis(0).title("Weight (kg)");
-        cartesian.yAxis(0).labels().padding(-20d, 0d, 0d, -5d);
-        cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
+            Cartesian cartesian = AnyChart.line();
 
-        List<DataEntry> seriesData = new ArrayList<>();
-        seriesData.add(new ValueDataEntry("Oct 1", 100));
-        seriesData.add(new ValueDataEntry("Oct 2", 99.5));
-        seriesData.add(new ValueDataEntry("Oct 3", 99.6));
-        seriesData.add(new ValueDataEntry("Oct 4", 98));
-        seriesData.add(new ValueDataEntry("Oct 5", 97.6));
-        seriesData.add(new ValueDataEntry("Oct 6", 98.9));
-        seriesData.add(new ValueDataEntry("Oct 9", 100));
-        seriesData.add(new ValueDataEntry("Oct 10", 99.9));
-        seriesData.add(new ValueDataEntry("Oct 11", 99));
-        seriesData.add(new ValueDataEntry("Oct 12", 97.7));
-        seriesData.add(new ValueDataEntry("Oct 13", 96));
-        seriesData.add(new ValueDataEntry("Oct 17", 95));
-        seriesData.add(new ValueDataEntry("Oct 18", 95.5));
-        seriesData.add(new ValueDataEntry("Oct 19", 94.4));
-        seriesData.add(new ValueDataEntry("Oct 20", 92.3));
-        seriesData.add(new ValueDataEntry("Oct 21", 91.9));
-        seriesData.add(new ValueDataEntry("Oct 25", 91.8));
-        seriesData.add(new ValueDataEntry("Oct 30", 91.1));
-        seriesData.add(new ValueDataEntry("Nov 5", 90));
-        seriesData.add(new ValueDataEntry("Nov 8", 87.5));
-        seriesData.add(new ValueDataEntry("Nov 16", 85));
+            cartesian.padding(10d, 20d, 5d, 20d);
 
+            cartesian.crosshair().enabled(true);
+            cartesian.crosshair()
+                    .yLabel(true)
+                    .yStroke((Stroke) null, null, null, (String) null, (String) null);
 
-        Set set = Set.instantiate();
-        set.data(seriesData);
-        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+            cartesian.background().fill("#111111");
 
-        Line series1 = cartesian.line(series1Mapping);
-        series1.name("Weight");
-        series1.legendItem().enabled(false);
-        series1.hovered().markers().enabled(true);
-        series1.markers().enabled(true);
-        series1.stroke("#f77f00");
+            cartesian.yAxis(0).title("Weight (kg)");
+            cartesian.yAxis(0).labels().padding(0d, 0d, 0d, 0d);
+            cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
+
+            Set set = Set.instantiate();
+            set.data(data);
+            Mapping chartMapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+            Line chart = cartesian.line(chartMapping);
+            chart.name("Weight");
+            chart.legendItem().enabled(false);
+            chart.hovered().markers().enabled(true);
+            chart.markers().enabled(true);
+            chart.stroke("#f77f00");
 
 
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
+            cartesian.legend().enabled(true);
+            cartesian.legend().fontSize(13d);
+            cartesian.legend().padding(0d, 0d, 10d, 0d);
 
-        anyChartView.setChart(cartesian);
+            anyChartView.setChart(cartesian);
+        }
     }
 
 
-    private void addDataListener() {
+    private void addDataListener(View mainView) {
         addData.setOnClickListener(v -> {
             // Show Dialog
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
@@ -151,21 +175,17 @@ public class WeightFragment extends Fragment {
                 try {
                     weight = Double.parseDouble(input.getText().toString());
                     dbUtil.addWeightToDb(weight);
+                    dbUtil.addDoubleToDb("latestWeight", weight);
+                    getDBValues(mainView);
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getContext(), "Weight " + weight, Toast.LENGTH_SHORT).show();
                 alertDialog.dismiss();
-
             });
 
             alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
             alertDialog.show();
         });
-    }
-
-    private void addNewWeightToDB() {
-
     }
 }

@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     DashboardFragment dashboardFragment = new DashboardFragment();
     ActivityMainBinding binding;
-
     String uIDDB, email;
     Long bmr = 0L;
-    Boolean variablesNotFetched = true;
+    double latestWeight, height;
+    Boolean variablesFetched = false;
 
 
 
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            if(variablesNotFetched)
                 getValuesFromDB();
         }
     }
@@ -107,12 +106,34 @@ public class MainActivity extends AppCompatActivity {
                                 uIDDB = (String) data.get("uid");
                                 email = (String) data.get("email");
                                 bmr = (Long) data.get("activityBmr");
-                                variablesNotFetched = false;
+                                // Check and retrieve the latestWeight as a Double
+                                Object latestWeightObject = data.get("latestWeight");
+                                if (latestWeightObject != null) {
+                                    latestWeight = ((Number) latestWeightObject).doubleValue();
+                                } else {
+                                    sendToGetInfo(false);
+                                }
+
+                                // Check and retrieve the height as a Double
+                                Object heightObject = data.get("height");
+                                if (heightObject != null) {
+                                    height = ((Number) heightObject).doubleValue();
+                                } else {
+                                    sendToGetInfo(true);
+                                }
+
                             }
                         } else {
                             Log.e("Firestore", "Error: " + Objects.requireNonNull(task.getException()).getMessage(), task.getException());
                         }
                     }
                 });
+    }
+
+    private void sendToGetInfo(boolean putExtraWeight) {
+        Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
+        intent.putExtra("weightExists", putExtraWeight);
+        startActivity(intent);
+        finish();
     }
 }

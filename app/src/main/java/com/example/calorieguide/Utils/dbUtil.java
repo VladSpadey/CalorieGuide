@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.calorieguide.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -93,7 +94,7 @@ public class dbUtil {
         user = auth.getCurrentUser();
 
         Map<String, Object> weightData = new HashMap<>();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
         weightData.put("weight", weight);
         weightData.put("date", currentDate);
         CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
@@ -124,6 +125,4 @@ public class dbUtil {
                     }
                 });
     }
-
-
 }
