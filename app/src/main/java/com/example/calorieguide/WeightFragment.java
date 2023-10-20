@@ -45,7 +45,7 @@ public class WeightFragment extends Fragment {
     AnyChartView anyChartView;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     static FirebaseAuth auth;
-    List<DataEntry> seriesData;
+    List<DataEntry> chartData;
     private boolean isChartLoading = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,27 +93,29 @@ public class WeightFragment extends Fragment {
     private void getDBValues(View view) {
         CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
         weightCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            seriesData = new ArrayList<>();
+            chartData = new ArrayList<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 // Extract data from each document
                 String date = document.getString("date");  // Replace "date" with the field name in your Firestore document
                 double weight = document.getDouble("weight"); // Replace "weight" with the field name in your Firestore document
                 // Create a data entry and add it to the series data
-                seriesData.add(new ValueDataEntry(date, weight));
+                chartData.add(new ValueDataEntry(date, weight));
             }
 
             // After fetching all the data, update the chart with the new data
-            setupChart(view, seriesData);
+            setupChart(view, chartData);
+            isChartLoading = true;
         });
     }
 
     private void setupChart(View view, List<DataEntry> data) {
-        if (anyChartView != null)
-            anyChartView.invalidate();
         if(isChartLoading){
             anyChartView = view.findViewById(R.id.weight_chart_view);
             anyChartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
             anyChartView.setBackgroundColor("#111111");
+
+            if (anyChartView != null)
+                anyChartView.invalidate(); // Chart is supposed to be redrawn after this point
 
             Cartesian cartesian = AnyChart.line();
 
@@ -133,14 +135,14 @@ public class WeightFragment extends Fragment {
 
             Set set = Set.instantiate();
             set.data(data);
-            Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+            Mapping chartMapping = set.mapAs("{ x: 'x', value: 'value' }");
 
-            Line series1 = cartesian.line(series1Mapping);
-            series1.name("Weight");
-            series1.legendItem().enabled(false);
-            series1.hovered().markers().enabled(true);
-            series1.markers().enabled(true);
-            series1.stroke("#f77f00");
+            Line chart = cartesian.line(chartMapping);
+            chart.name("Weight");
+            chart.legendItem().enabled(false);
+            chart.hovered().markers().enabled(true);
+            chart.markers().enabled(true);
+            chart.stroke("#f77f00");
 
 
             cartesian.legend().enabled(true);
@@ -173,11 +175,12 @@ public class WeightFragment extends Fragment {
                 try {
                     weight = Double.parseDouble(input.getText().toString());
                     dbUtil.addWeightToDb(weight);
+                    dbUtil.addDoubleToDb("latestWeight", weight);
+                    getDBValues(mainView);
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
-                getDBValues(mainView);
                 alertDialog.dismiss();
             });
 

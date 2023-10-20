@@ -17,13 +17,15 @@ public class GetAdditionalInfo extends AppCompatActivity {
     RadioGroup sexRadioGroup;
     RadioButton sex;
     EditText age, height, weight;
+    boolean latestWeightExists;
 
     @Override
     // This page is going to be open after users first log in, this View asks the user to provide additional info to determine their calorie intake
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_additional_info);
-
+        Intent intent = getIntent();
+        boolean latestWeightExists = intent.getBooleanExtra("weightExists", true);
 
         age = findViewById(R.id.age_edit_text);
         height = findViewById(R.id.height_edit_text);
@@ -54,6 +56,9 @@ public class GetAdditionalInfo extends AppCompatActivity {
                 double ageValue = Double.parseDouble(ageString);
 
                 dbUtil.addDoubleToDb("initialWeight", weightValue);
+                if(!latestWeightExists){
+                    dbUtil.addDoubleToDb("latestWeight", weightValue);
+                }
                 dbUtil.addDoubleToDb("height", heightValue);
                 dbUtil.addDoubleToDb("age", ageValue);
                 dbUtil.addStringToDb("sex", sexString);
