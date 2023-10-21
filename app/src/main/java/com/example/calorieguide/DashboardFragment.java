@@ -7,32 +7,24 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.SingleValueDataSet;
+import com.anychart.charts.LinearGauge;
+import com.anychart.enums.Anchor;
+import com.anychart.enums.Layout;
+import com.anychart.enums.MarkerType;
+import com.anychart.enums.Orientation;
+import com.anychart.enums.Position;
+import com.anychart.scales.OrdinalColor;
+
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
@@ -44,6 +36,9 @@ public class DashboardFragment extends Fragment {
     String uIDDB, email;
     Long bmr;
     double weight, height;
+    String formattedBMI;
+    private boolean isChartLoading = false;
+    AnyChartView anyChartView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,21 +66,88 @@ public class DashboardFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Cancel loading if the fragment is destroyed while the chart is loading
+        if (isChartLoading) {
+            isChartLoading = false;
+            anyChartView = null;
+        }
+    }
+
     private void setupBMI(View view) {
         double bmi = calculateBMI();
         TextView bmiText = view.findViewById(R.id.dashboard_txtBMI);
         TextView bmiTextCategory = view.findViewById(R.id.dashboard_txtBMICategory);
 
-
-        String formattedBMI = df.format(bmi);
-
-        bmiText.setText("Your Body Mass Weight (BMI) is: " + formattedBMI);
+        formattedBMI = df.format(bmi);
+        bmiText.setText("Your Body Mass Index (BMI) is: " + formattedBMI);
 
         String category = getCategory(bmi);
         bmiTextCategory.setText("Category: " + category);
 
         getToHealthyWeight(view, category, bmi);
+        if (!isChartLoading) {
+            // Start loading chart data
+            isChartLoading = true;
+            setupBMIChart(view);
+        }
+
     }
+
+    private void setupBMIChart(View view) {
+        if (isChartLoading){
+            anyChartView = view.findViewById(R.id.bmi_chart_view);
+            anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
+            LinearGauge linearGauge = AnyChart.linear();
+
+            double marker = Double.parseDouble(formattedBMI);
+
+            linearGauge.data(new SingleValueDataSet(new Double[] { marker }));
+
+            linearGauge.layout(Layout.HORIZONTAL);
+
+            OrdinalColor scaleBarColorScale = OrdinalColor.instantiate();
+            scaleBarColorScale.ranges(new String[]{
+                    "{ from: 0, to: 17, color: ['red 0.5'] }",
+                    "{ from: 17, to: 18.5, color: ['yellow 0.75'] }",
+                    "{ from: 18.5, to: 25, color: ['green 0.75'] }",
+                    "{ from: 25, to: 30, color: ['yellow 0.75'] }",
+                    "{ from: 30, to: 35, color: ['red 0.75'] }",
+                    "{ from: 35, to: 40, color: ['red 0.5'] }"
+            });
+
+            linearGauge.scaleBar(0)
+                    .width("25%")
+                    .colorScale(scaleBarColorScale);
+
+            linearGauge.marker(0)
+                    .type(MarkerType.TRIANGLE_DOWN)
+                    .color("white")
+                    .zIndex(15);
+
+            linearGauge.scale()
+                    .minimum(0)
+                    .maximum(40);
+
+            linearGauge.axis(0)
+                    .minorTicks(false)
+                    .width("1%");
+            linearGauge.axis(0)
+                    .offset("-1.5%")
+                    .orientation(Orientation.TOP)
+                    .labels("top");
+
+            linearGauge.padding(0, 15, 0, 15);
+            linearGauge.background().enabled(true);
+            linearGauge.background().fill("#111111");
+
+            anyChartView.setChart(linearGauge);
+        }
+        }
+
+
 
     private void getToHealthyWeight(View view, String category, double bmi) {
         TextView txtGetToHealthy = view.findViewById(R.id.dashboard_txtBMICategory_health);

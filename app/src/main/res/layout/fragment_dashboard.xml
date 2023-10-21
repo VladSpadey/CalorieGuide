@@ -61,6 +61,14 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp" />
 
+        <ProgressBar
+            android:id="@+id/bmi_progress_bar"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
         <TextView
             android:id="@+id/dashboard_txtBMI"
             android:layout_width="wrap_content"

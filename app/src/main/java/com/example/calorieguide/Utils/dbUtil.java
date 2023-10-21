@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.example.calorieguide.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -15,9 +17,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +111,28 @@ public class dbUtil {
                     // Handle the error in case of failure
                 });
     }
+
+    public static List<DataEntry> getWeightChartValues() {
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
+        List<DataEntry> chartData= new ArrayList<>();
+        weightCollectionRef.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String date = document.getString("date");
+                        double weight = document.getDouble("weight");
+                        chartData.add(new ValueDataEntry(date, weight));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error here, e.g., log the error or display an error message.
+                    // You can access the error message with e.getMessage().
+                });
+        return chartData;
+    }
+
     private void checkUserBMR() {
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");

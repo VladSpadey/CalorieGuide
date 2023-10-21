@@ -9,7 +9,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.anychart.chart.common.dataentry.DataEntry;
 import com.example.calorieguide.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,8 +28,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import com.example.calorieguide.Utils.dbUtil;
 
 public class MainActivity extends AppCompatActivity {
     // WEIGHT PAGE
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     String uIDDB, email;
     Long bmr = 0L;
     double latestWeight, height;
+
+    List<DataEntry> weightChartValues;
     Boolean variablesFetched = false;
 
 
@@ -80,7 +86,13 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else {
                 getValuesFromDB();
+                updateWeightValues();
         }
+    }
+
+    public void updateWeightValues(){
+        weightChartValues = dbUtil.getWeightChartValues();
+        Toast.makeText(this, weightChartValues.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment) {
