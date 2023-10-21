@@ -1,25 +1,33 @@
 package com.example.calorieguide;
 
+import static androidx.navigation.fragment.FragmentKt.findNavController;
+
+import android.app.FragmentTransaction;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
@@ -27,11 +35,10 @@ import com.anychart.data.Set;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.calorieguide.Utils.dbUtil;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 public class WeightFragment extends Fragment {
@@ -50,8 +57,7 @@ public class WeightFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_weight, container, false);
         MainActivity mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
@@ -61,18 +67,16 @@ public class WeightFragment extends Fragment {
         overlay = view.findViewById(R.id.overlay);
 
         if (!isChartLoading) {
-            // Start loading your chart data
             isChartLoading = true;
-            //getDBValues(view);
         }
-
         // Chart
-        setupChart(mainActivity.weightChartValues);
+        List <DataEntry> chart = mainActivity.weightChartValues;
+        setupChart(chart);
 
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener();
+        addDataListener(mainActivity);
 
         return view;
     }
@@ -128,8 +132,7 @@ public class WeightFragment extends Fragment {
         }
     }
 
-
-    private void addDataListener() {
+    private void addDataListener(MainActivity mainActivity) {
         addData.setOnClickListener(v -> {
             // Show Dialog
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
@@ -151,6 +154,7 @@ public class WeightFragment extends Fragment {
                     weight = Double.parseDouble(input.getText().toString());
                     dbUtil.addWeightToDb(weight);
                     dbUtil.addDoubleToDb("latestWeight", weight);
+                    mainActivity.updateWeightValues();
                 } catch (NumberFormatException e) {
                     // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();

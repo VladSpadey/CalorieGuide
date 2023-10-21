@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.example.calorieguide.databinding.ActivityMainBinding;
@@ -85,8 +86,13 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else {
                 getValuesFromDB();
-                weightChartValues = dbUtil.getWeightChartValues();
+                updateWeightValues();
         }
+    }
+
+    public void updateWeightValues(){
+        weightChartValues = dbUtil.getWeightChartValues();
+        Toast.makeText(this, weightChartValues.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment) {
