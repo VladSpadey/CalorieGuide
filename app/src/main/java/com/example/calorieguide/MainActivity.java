@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateWeightValues(){
         weightChartValues = dbUtil.getWeightChartValues();
-        Toast.makeText(this, weightChartValues.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment) {
