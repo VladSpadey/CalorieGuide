@@ -152,23 +152,29 @@ public class DashboardFragment extends Fragment {
     private void getToHealthyWeight(View view, String category, double bmi) {
         TextView txtGetToHealthy = view.findViewById(R.id.dashboard_txtBMICategory_health);
         boolean aboveHealthy = false;
-        boolean visible = false;
+        boolean belowHealthy = false;
+        boolean healthy = false;
+
         if (Objects.equals(category, "Underweight")){
-            aboveHealthy = false;
-        } else {
+            belowHealthy = true;
+        } else if(Objects.equals(category, "Overweight") || Objects.equals(category, "Obese")){
             aboveHealthy = true;
+        } else {
+            healthy = true;
         }
 
         double heightinM = height  / 100;
 
-        if(aboveHealthy){
+        if(healthy){
+            txtGetToHealthy.setVisibility(View.GONE);
+        } else if(aboveHealthy){
             double desiredBMI = 25;
             double idealWeight = desiredBMI * (heightinM * heightinM);
             double weightToLose = weight - idealWeight;
             String txtHealthy = "Lose " + df.format(weightToLose) + "kg to reach Normal BMI level";
             txtGetToHealthy.setText(txtHealthy);
             txtGetToHealthy.setVisibility(View.VISIBLE);
-        } else if (!aboveHealthy){
+        } else if (belowHealthy){
             double desiredBMI = 18.5;
             double idealWeight = desiredBMI * (heightinM * heightinM);
             double weightToLose = idealWeight - weight;
