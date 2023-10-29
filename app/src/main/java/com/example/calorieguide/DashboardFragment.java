@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,9 @@ import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.SingleValueDataSet;
 import com.anychart.charts.LinearGauge;
-import com.anychart.enums.Anchor;
 import com.anychart.enums.Layout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
-import com.anychart.enums.Position;
 import com.anychart.scales.OrdinalColor;
 
 import android.widget.TextView;
@@ -37,8 +36,10 @@ public class DashboardFragment extends Fragment {
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     DecimalFormat df = new DecimalFormat("0.0");
-    String uIDDB, email, sex;
-    Long bmr;
+    // UserData
+    MainActivity mainActivity;
+    String uID, email, sex;
+    Long bmr =0L;
     double weight, height, activityLevel,age;
     String formattedBMI;
     private boolean isChartLoading = false;
@@ -50,16 +51,16 @@ public class DashboardFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
 
-        // get all values from mainActivity and update UI
-        MainActivity mainActivity = (MainActivity) getActivity();
+        // User Data
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
-        mainActivity.getValuesFromDB();
-        uIDDB = mainActivity.uIDDB;
-        email = mainActivity.email;
-        bmr = mainActivity.bmr;
-        age = mainActivity.age;
-        weight = mainActivity.latestWeight;
-        height = mainActivity.height;
+        user = mainActivity.user;
+        uID = (String) mainActivity.userData.get("uid");
+        email = (String) mainActivity.userData.get("email");
+        bmr = (Long) mainActivity.userData.get("activityBmr");
+        age = (double) mainActivity.userData.get("age");
+        weight = (double) mainActivity.userData.get("latestWeight");
+        height = (double) mainActivity.userData.get("height");
         activityLevel = mainActivity.activityLevel;
         sex = mainActivity.sex;
 
@@ -68,7 +69,6 @@ public class DashboardFragment extends Fragment {
 
         // Set Up BMR
         setupBMRdesc(view);
-        updateBMR();
 
         // Set Up BMI
         setupBMI(view);
@@ -215,17 +215,5 @@ public class DashboardFragment extends Fragment {
     private void setupBMRdesc(View view) {
         TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
         txtBMR.setText("Your approximate BMR: " + bmr);
-    }
-
-    private void updateBMR(){
-        long updatedBMR = 0;
-        double BMR = 0;
-        if (sex.equals("Female")){
-            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
-        } else if (sex.equals("Male")) {
-            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
-        }
-        updatedBMR = round(BMR * activityLevel);
-        dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
     }
 }

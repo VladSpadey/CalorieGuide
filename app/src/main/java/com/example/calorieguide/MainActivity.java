@@ -1,6 +1,5 @@
 package com.example.calorieguide;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -9,27 +8,19 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.anychart.chart.common.dataentry.DataEntry;
-import com.example.calorieguide.Utils.UserData;
 import com.example.calorieguide.Utils.dbManager;
 import com.example.calorieguide.databinding.ActivityMainBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     String uIDDB, email, sex;
     Long bmr = 0L;
+    Map<String, Object> userData;
     Double activityLevel, age;
     double latestWeight, height;
 
@@ -89,10 +81,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            dbManager dataManager = new dbManager();
-            Map<String, Object>  data = dataManager.getUserData();
-            Log.d("dbManager", "2. MainActivity Data: " + data);
-            getValuesFromDB();
+            updateValuesFromDB();
             updateWeightValues();
         }
     }
@@ -108,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    public void getValuesFromDB() {
+    public void updateValuesFromDB() {
         // Gets values of the user from DB
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");
@@ -116,30 +105,30 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> data = document.getData();
-                            uIDDB = (String) data.get("uid");
-                            email = (String) data.get("email");
-                            bmr = (Long) data.get("activityBmr");
-                            Object latestWeightObject = data.get("latestWeight");
+                            userData = document.getData();
+                            uIDDB = (String) userData.get("uid");
+                            email = (String) userData.get("email");
+                            bmr = (Long) userData.get("activityBmr");
+                            Object latestWeightObject = userData.get("latestWeight");
                             if (latestWeightObject != null) {
                                 latestWeight = ((Number) latestWeightObject).doubleValue();
                             } else {
                                 sendToGetInfo(false);
                             }
-                            Object heightObject = data.get("height");
+                            Object heightObject = userData.get("height");
                             if (heightObject != null) {
                                 height = ((Number) heightObject).doubleValue();
                             } else {
                                 sendToGetInfo(true);
                             }
-                            Object activityLevelObject = data.get("activityLevelMultiplier");
+                            Object activityLevelObject = userData.get("activityLevelMultiplier");
                             if (activityLevelObject != null) {
                                 activityLevel =  ((Number) activityLevelObject).doubleValue();
                             } else {
                                 sendToGetInfo(true);
                             }
-                            age = (Double) data.get("age");
-                            sex = (String) data.get("sex");
+                            age = (Double) userData.get("age");
+                            sex = (String) userData.get("sex");
                         }
                     } else {
                         Log.e("Firestore", "Error: " + Objects.requireNonNull(task.getException()).getMessage(), task.getException());

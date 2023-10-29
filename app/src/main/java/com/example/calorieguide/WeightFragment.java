@@ -1,29 +1,20 @@
 package com.example.calorieguide;
 
-import static androidx.navigation.fragment.FragmentKt.findNavController;
+import static java.lang.Math.round;
 
-import android.app.FragmentTransaction;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import java.util.List;
-import java.util.Objects;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
@@ -35,7 +26,6 @@ import com.anychart.data.Set;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,7 +33,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class WeightFragment extends Fragment {
     FirebaseUser user;
-    String uID, email;
+
+    MainActivity mainActivity;
+    String uID, email, sex;
+    Long bmr =0L;
+    double weight, height, activityLevel,age;
     Button addData;
     View overlay;
     AnyChartView chartView;
@@ -61,11 +55,20 @@ public class WeightFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_weight, container, false);
-        MainActivity mainActivity = (MainActivity) getActivity();
+
+        // User Data
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
         user = mainActivity.user;
-        uID = mainActivity.uIDDB;
-        email = mainActivity.email;
+        uID = (String) mainActivity.userData.get("uid");
+        email = (String) mainActivity.userData.get("email");
+        bmr = (Long) mainActivity.userData.get("activityBmr");
+        age = (double) mainActivity.userData.get("age");
+        weight = (double) mainActivity.userData.get("latestWeight");
+        height = (double) mainActivity.userData.get("height");
+        activityLevel = mainActivity.activityLevel;
+        sex = mainActivity.sex;
+
         overlay = view.findViewById(R.id.overlay);
 
         if (!isChartLoading) {
@@ -81,11 +84,9 @@ public class WeightFragment extends Fragment {
             chartView.setVisibility(View.VISIBLE);
         }
 
-
-
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener(mainActivity);
+        addDataListener();
 
         return view;
     }
@@ -140,7 +141,7 @@ public class WeightFragment extends Fragment {
         }
     }
 
-    private void addDataListener(MainActivity mainActivity) {
+    private void addDataListener() {
         addData.setOnClickListener(v -> {
             // Show Dialog
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
@@ -156,14 +157,13 @@ public class WeightFragment extends Fragment {
 
 
             updateWeight.setOnClickListener(v1 -> {
-
                 double weight;
                 try {
                     weight = Double.parseDouble(input.getText().toString());
                     dbUtil.addWeightToDb(weight);
                     dbUtil.addDoubleToDb("latestWeight", weight);
-                    mainActivity.updateWeightValues();
-                    mainActivity.getValuesFromDB();
+                    mainActivity.userData.put("latestWeight", weight);
+                    updateBMR();
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
@@ -173,6 +173,19 @@ public class WeightFragment extends Fragment {
             alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
             alertDialog.show();
         });
+    }
+
+    private void updateBMR(){
+        long updatedBMR = 0;
+        double BMR = 0;
+        if (sex.equals("Female")){
+            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+        } else if (sex.equals("Male")) {
+            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+        }
+        updatedBMR = round(BMR * activityLevel);
+        mainActivity.userData.put("activityBmr", (Long) updatedBMR);
+        dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
     }
 
 }
