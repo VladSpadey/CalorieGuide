@@ -1,9 +1,12 @@
 package com.example.calorieguide;
 
+import static java.lang.Math.round;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +15,15 @@ import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.SingleValueDataSet;
 import com.anychart.charts.LinearGauge;
-import com.anychart.enums.Anchor;
+import com.anychart.core.lineargauge.pointers.Marker;
 import com.anychart.enums.Layout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
-import com.anychart.enums.Position;
 import com.anychart.scales.OrdinalColor;
 
 import android.widget.TextView;
+
+import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,9 +37,11 @@ public class DashboardFragment extends Fragment {
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     DecimalFormat df = new DecimalFormat("0.0");
-    String uIDDB, email;
-    Long bmr;
-    double weight, height;
+    // UserData
+    MainActivity mainActivity;
+    String uID, email, sex;
+    Long bmr =0L;
+    double weight, height, activityLevel,age;
     String formattedBMI;
     private boolean isChartLoading = false;
     AnyChartView anyChartView;
@@ -46,14 +52,18 @@ public class DashboardFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
 
-        // get all values from mainActivity and update UI
-        MainActivity mainActivity = (MainActivity) getActivity();
+        // User Data
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
-        uIDDB = mainActivity.uIDDB;
-        email = mainActivity.email;
-        bmr = mainActivity.bmr;
-        weight = mainActivity.latestWeight;
-        height = mainActivity.height;
+        user = mainActivity.user;
+        uID = (String) mainActivity.userData.get("uid");
+        email = (String) mainActivity.userData.get("email");
+        bmr = (Long) mainActivity.userData.get("activityBmr");
+        age = (double) mainActivity.userData.get("age");
+        weight = (double) mainActivity.userData.get("latestWeight");
+        height = (double) mainActivity.userData.get("height");
+        activityLevel = mainActivity.activityLevel;
+        sex = mainActivity.sex;
 
         user = mainActivity.user;
         assert user != null;
@@ -77,6 +87,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupBMI(View view) {
+
         double bmi = calculateBMI();
         TextView bmiText = view.findViewById(R.id.dashboard_txtBMI);
         TextView bmiTextCategory = view.findViewById(R.id.dashboard_txtBMICategory);
@@ -125,7 +136,10 @@ public class DashboardFragment extends Fragment {
             linearGauge.marker(0)
                     .type(MarkerType.TRIANGLE_DOWN)
                     .color("white")
-                    .zIndex(15);
+                    .zIndex(1)
+                    .width("15")
+                    .offset(-3);
+
 
             linearGauge.scale()
                     .minimum(0)
@@ -146,8 +160,6 @@ public class DashboardFragment extends Fragment {
             anyChartView.setChart(linearGauge);
         }
         }
-
-
 
     private void getToHealthyWeight(View view, String category, double bmi) {
         TextView txtGetToHealthy = view.findViewById(R.id.dashboard_txtBMICategory_health);

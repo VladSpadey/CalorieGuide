@@ -1,33 +1,33 @@
 package com.example.calorieguide;
 
-import static androidx.navigation.fragment.FragmentKt.findNavController;
+import static java.lang.Math.round;
 
-import android.app.FragmentTransaction;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
+import java.util.Map;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
@@ -35,7 +35,6 @@ import com.anychart.data.Set;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,10 +42,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class WeightFragment extends Fragment {
     FirebaseUser user;
-    String uID, email;
+
+    MainActivity mainActivity;
+    String uID, email, sex;
+    Long bmr =0L;
+    double weight, height, activityLevel,age;
     Button addData;
     View overlay;
     AnyChartView chartView;
+    List <DataEntry> chart;
+    Cartesian cartesian;
+    Set dataSet;
     View view;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<DataEntry> chartData;
@@ -59,24 +65,40 @@ public class WeightFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_weight, container, false);
-        MainActivity mainActivity = (MainActivity) getActivity();
+
+        // User Data
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
         user = mainActivity.user;
-        uID = mainActivity.uIDDB;
-        email = mainActivity.email;
+        uID = (String) mainActivity.userData.get("uid");
+        email = (String) mainActivity.userData.get("email");
+        bmr = (Long) mainActivity.userData.get("activityBmr");
+        age = (double) mainActivity.userData.get("age");
+        weight = (double) mainActivity.userData.get("latestWeight");
+        height = (double) mainActivity.userData.get("height");
+        activityLevel = mainActivity.activityLevel;
+        sex = mainActivity.sex;
+
         overlay = view.findViewById(R.id.overlay);
 
         if (!isChartLoading) {
             isChartLoading = true;
         }
-        // Chart
-        List <DataEntry> chart = mainActivity.weightChartValues;
-        setupChart(chart);
 
+        // Chart
+        chart = mainActivity.weightChartValues;
+        Log.d("UserData_Chart", "chart:" + chart);
+        if (chart.isEmpty()){
+            chartView = view.findViewById(R.id.weight_chart_view);
+            chartView.setVisibility(View.GONE);
+        } else {
+            setupChart(chart);
+            chartView.setVisibility(View.VISIBLE);
+        }
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener(mainActivity);
+        addDataListener();
 
         return view;
     }
@@ -87,7 +109,6 @@ public class WeightFragment extends Fragment {
         // Cancel loading if the fragment is destroyed while the chart is loading
         if (isChartLoading) {
             isChartLoading = false;
-            // Cancel loading logic (e.g., cancel network requests)
         }
     }
 
@@ -97,7 +118,7 @@ public class WeightFragment extends Fragment {
             chartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
 
             if(chartView != null){
-                Cartesian cartesian = AnyChart.line();
+                cartesian = AnyChart.line();
                 cartesian.padding(10d, 20d, 5d, 20d);
                 cartesian.crosshair().enabled(true);
                 cartesian.crosshair()
@@ -111,28 +132,26 @@ public class WeightFragment extends Fragment {
                 cartesian.yAxis(0).labels().padding(0d, 0d, 0d, 0d);
                 cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
 
-                Set set = Set.instantiate();
-                set.data(data);
-                Mapping chartMapping = set.mapAs("{ x: 'x', value: 'value' }");
+                Set dataSet = Set.instantiate();
+                dataSet.data(data);
+                Mapping chartMapping = dataSet.mapAs("{ x: 'x', value: 'value' }");
 
-                Line chart = cartesian.line(chartMapping);
-                chart.name("Weight");
-                chart.legendItem().enabled(false);
-                chart.hovered().markers().enabled(true);
-                chart.markers().enabled(true);
-                chart.stroke("#f77f00");
-
-
+                Line chartLine = cartesian.line(chartMapping);
+                chartLine.name("Weight");
+                chartLine.legendItem().enabled(false);
+                chartLine.hovered().markers().enabled(true);
+                chartLine.markers().enabled(true);
+                chartLine.stroke("#f77f00");
+                cartesian.autoRedraw(true);
                 cartesian.legend().enabled(true);
                 cartesian.legend().fontSize(13d);
                 cartesian.legend().padding(0d, 0d, 10d, 0d);
-
                 chartView.setChart(cartesian);
             }
         }
     }
 
-    private void addDataListener(MainActivity mainActivity) {
+    private void addDataListener() {
         addData.setOnClickListener(v -> {
             // Show Dialog
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
@@ -148,15 +167,21 @@ public class WeightFragment extends Fragment {
 
 
             updateWeight.setOnClickListener(v1 -> {
-
                 double weight;
                 try {
                     weight = Double.parseDouble(input.getText().toString());
                     dbUtil.addWeightToDb(weight);
                     dbUtil.addDoubleToDb("latestWeight", weight);
-                    mainActivity.updateWeightValues();
+                    mainActivity.userData.put("latestWeight", weight);
+
+                    Map<String, Object> weightData = new HashMap<>();
+                    String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
+                    weightData.put("weight", weight);
+                    weightData.put("date", currentDate);
+                    chart.add(new ValueDataEntry(currentDate, weight));
+                    updateBMR();
+                    isChartLoading = false;
                 } catch (NumberFormatException e) {
-                    // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
                 alertDialog.dismiss();
@@ -166,4 +191,18 @@ public class WeightFragment extends Fragment {
             alertDialog.show();
         });
     }
+
+    private void updateBMR(){
+        long updatedBMR = 0;
+        double BMR = 0;
+        if (sex.equals("Female")){
+            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+        } else if (sex.equals("Male")) {
+            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+        }
+        updatedBMR = round(BMR * activityLevel);
+        mainActivity.userData.put("activityBmr", (Long) updatedBMR);
+        dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
+    }
+
 }
