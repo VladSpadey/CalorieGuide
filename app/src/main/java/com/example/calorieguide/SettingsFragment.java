@@ -25,10 +25,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
 
-import java.util.Map;
-import java.util.Objects;
-import com.example.calorieguide.Utils.dbManager;
-
 public class SettingsFragment extends Fragment {
     Button btn_logout, btn_deleteUser;
     FirebaseUser user;

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.anychart.chart.common.dataentry.DataEntry;
-import com.example.calorieguide.Utils.dbManager;
 import com.example.calorieguide.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -88,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateWeightValues(){
         weightChartValues = dbUtil.getWeightChartValues();
+
     }
 
     private void replaceFragment(Fragment fragment) {

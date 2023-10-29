@@ -5,6 +5,8 @@ import static java.lang.Math.round;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,18 @@ import androidx.appcompat.app.AlertDialog;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
@@ -42,11 +51,12 @@ public class WeightFragment extends Fragment {
     View overlay;
     AnyChartView chartView;
     List <DataEntry> chart;
+    Cartesian cartesian;
+    Set dataSet;
     View view;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<DataEntry> chartData;
     private boolean isChartLoading = false;
-    Set dataSet;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +84,10 @@ public class WeightFragment extends Fragment {
         if (!isChartLoading) {
             isChartLoading = true;
         }
+
         // Chart
         chart = mainActivity.weightChartValues;
+        Log.d("UserData_Chart", "chart:" + chart);
         if (chart.isEmpty()){
             chartView = view.findViewById(R.id.weight_chart_view);
             chartView.setVisibility(View.GONE);
@@ -97,7 +109,6 @@ public class WeightFragment extends Fragment {
         // Cancel loading if the fragment is destroyed while the chart is loading
         if (isChartLoading) {
             isChartLoading = false;
-            // Cancel loading logic (e.g., cancel network requests)
         }
     }
 
@@ -107,7 +118,7 @@ public class WeightFragment extends Fragment {
             chartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
 
             if(chartView != null){
-                Cartesian cartesian = AnyChart.line();
+                cartesian = AnyChart.line();
                 cartesian.padding(10d, 20d, 5d, 20d);
                 cartesian.crosshair().enabled(true);
                 cartesian.crosshair()
@@ -125,14 +136,13 @@ public class WeightFragment extends Fragment {
                 dataSet.data(data);
                 Mapping chartMapping = dataSet.mapAs("{ x: 'x', value: 'value' }");
 
-                Line chart = cartesian.line(chartMapping);
-                chart.name("Weight");
-                chart.legendItem().enabled(false);
-                chart.hovered().markers().enabled(true);
-                chart.markers().enabled(true);
-                chart.stroke("#f77f00");
-
-
+                Line chartLine = cartesian.line(chartMapping);
+                chartLine.name("Weight");
+                chartLine.legendItem().enabled(false);
+                chartLine.hovered().markers().enabled(true);
+                chartLine.markers().enabled(true);
+                chartLine.stroke("#f77f00");
+                cartesian.autoRedraw(true);
                 cartesian.legend().enabled(true);
                 cartesian.legend().fontSize(13d);
                 cartesian.legend().padding(0d, 0d, 10d, 0d);
@@ -163,7 +173,14 @@ public class WeightFragment extends Fragment {
                     dbUtil.addWeightToDb(weight);
                     dbUtil.addDoubleToDb("latestWeight", weight);
                     mainActivity.userData.put("latestWeight", weight);
+
+                    Map<String, Object> weightData = new HashMap<>();
+                    String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
+                    weightData.put("weight", weight);
+                    weightData.put("date", currentDate);
+                    chart.add(new ValueDataEntry(currentDate, weight));
                     updateBMR();
+                    isChartLoading = false;
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
