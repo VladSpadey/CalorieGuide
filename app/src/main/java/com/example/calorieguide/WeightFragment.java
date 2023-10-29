@@ -47,10 +47,12 @@ public class WeightFragment extends Fragment {
     Button addData;
     View overlay;
     AnyChartView chartView;
+    List <DataEntry> chart;
     View view;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<DataEntry> chartData;
     private boolean isChartLoading = false;
+    Set dataSet;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +72,15 @@ public class WeightFragment extends Fragment {
             isChartLoading = true;
         }
         // Chart
-        List <DataEntry> chart = mainActivity.weightChartValues;
-        setupChart(chart);
+        chart = mainActivity.weightChartValues;
+        if (chart.isEmpty()){
+            chartView = view.findViewById(R.id.weight_chart_view);
+            chartView.setVisibility(View.GONE);
+        } else {
+            setupChart(chart);
+            chartView.setVisibility(View.VISIBLE);
+        }
+
 
 
         // Add Weight
@@ -111,9 +120,9 @@ public class WeightFragment extends Fragment {
                 cartesian.yAxis(0).labels().padding(0d, 0d, 0d, 0d);
                 cartesian.xAxis(0).labels().padding(5d, 5d, 20d, 5d);
 
-                Set set = Set.instantiate();
-                set.data(data);
-                Mapping chartMapping = set.mapAs("{ x: 'x', value: 'value' }");
+                Set dataSet = Set.instantiate();
+                dataSet.data(data);
+                Mapping chartMapping = dataSet.mapAs("{ x: 'x', value: 'value' }");
 
                 Line chart = cartesian.line(chartMapping);
                 chart.name("Weight");
@@ -126,7 +135,6 @@ public class WeightFragment extends Fragment {
                 cartesian.legend().enabled(true);
                 cartesian.legend().fontSize(13d);
                 cartesian.legend().padding(0d, 0d, 10d, 0d);
-
                 chartView.setChart(cartesian);
             }
         }
@@ -155,8 +163,8 @@ public class WeightFragment extends Fragment {
                     dbUtil.addWeightToDb(weight);
                     dbUtil.addDoubleToDb("latestWeight", weight);
                     mainActivity.updateWeightValues();
+                    mainActivity.getValuesFromDB();
                 } catch (NumberFormatException e) {
-                    // Handle the case where the input is not a valid double
                     Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                 }
                 alertDialog.dismiss();
@@ -166,4 +174,5 @@ public class WeightFragment extends Fragment {
             alertDialog.show();
         });
     }
+
 }

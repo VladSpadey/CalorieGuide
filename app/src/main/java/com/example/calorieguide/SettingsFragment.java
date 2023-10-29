@@ -25,7 +25,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.Map;
 import java.util.Objects;
+import com.example.calorieguide.Utils.dbManager;
 
 public class SettingsFragment extends Fragment {
     Button btn_logout, btn_deleteUser;
@@ -131,26 +133,20 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            // User account deleted.
                             Log.d("Firebase", "User Deleted");
-                            // Delete from Firestore
                             DocumentReference userRef = db.collection("users").document(uID);
                             userRef.delete()
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d("Firestore", "User Deleted");
-                                        // Show a toast message indicating success
                                         Toast.makeText(getContext(), "User Deleted", Toast.LENGTH_SHORT).show();
-                                        // Send to Log In Page
                                         Intent intent = new Intent(getContext(), Login.class);
                                         startActivity(intent);
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.d("Firestore", "User Deletion failed", e);
-                                        // Handle Firestore deletion failure
                                     });
                         } else {
                             Log.d("Firebase", "User Deletion failed", task.getException());
-                            // Handle Firebase deletion failure
                         }
                     }
                 });
@@ -161,16 +157,11 @@ public class SettingsFragment extends Fragment {
     }
 
     private void btn_logoutListener() {
-        // Set a click listener for the button
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform the logout action
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(requireContext(), Login.class); // Use requireContext() to get the context
-                startActivity(intent);
-                requireActivity().finish(); // Finish the hosting activity
-            }
+        btn_logout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(requireContext(), Login.class);
+            startActivity(intent);
+            requireActivity().finish();
         });
     }
 }

@@ -1,5 +1,7 @@
 package com.example.calorieguide.Utils;
 
+import static java.lang.Math.round;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -131,24 +133,5 @@ public class dbUtil {
                     // You can access the error message with e.getMessage().
                 });
         return chartData;
-    }
-
-    private void checkUserBMR() {
-        String uid = user.getUid();
-        CollectionReference docRef = db.collection("users");
-        Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).whereGreaterThan("bmr", 0).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().isEmpty()){
-                                Log.d("Firestore", "User doesn't have BMR setup: ", task.getException());
-                            }
-                            // User Has BMR, send to Dashboard
-                        } else {
-                            Log.d("Firestore", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
     }
 }

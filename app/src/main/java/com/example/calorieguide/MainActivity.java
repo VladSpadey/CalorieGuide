@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.anychart.chart.common.dataentry.DataEntry;
+import com.example.calorieguide.Utils.UserData;
+import com.example.calorieguide.Utils.dbManager;
 import com.example.calorieguide.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     DashboardFragment dashboardFragment = new DashboardFragment();
     ActivityMainBinding binding;
-    String uIDDB, email;
+    String uIDDB, email, sex;
     Long bmr = 0L;
+    Double activityLevel, age;
     double latestWeight, height;
 
     List<DataEntry> weightChartValues;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Get Data
 
         // Nav
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -85,8 +89,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-                getValuesFromDB();
-                updateWeightValues();
+            dbManager dataManager = new dbManager();
+            Map<String, Object>  data = dataManager.getUserData();
+            Log.d("dbManager", "2. MainActivity Data: " + data);
+            getValuesFromDB();
+            updateWeightValues();
         }
     }
 
@@ -101,49 +108,48 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void getValuesFromDB() {
+    public void getValuesFromDB() {
         // Gets values of the user from DB
         String uid = user.getUid();
         CollectionReference docRef = db.collection("users");
-
         Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Access data from the document
-                                Map<String, Object> data = document.getData();
-                                uIDDB = (String) data.get("uid");
-                                email = (String) data.get("email");
-                                bmr = (Long) data.get("activityBmr");
-                                // Check and retrieve the latestWeight as a Double
-                                Object latestWeightObject = data.get("latestWeight");
-                                if (latestWeightObject != null) {
-                                    latestWeight = ((Number) latestWeightObject).doubleValue();
-                                } else {
-                                    sendToGetInfo(false);
-                                }
-
-                                // Check and retrieve the height as a Double
-                                Object heightObject = data.get("height");
-                                if (heightObject != null) {
-                                    height = ((Number) heightObject).doubleValue();
-                                } else {
-                                    sendToGetInfo(true);
-                                }
-
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> data = document.getData();
+                            uIDDB = (String) data.get("uid");
+                            email = (String) data.get("email");
+                            bmr = (Long) data.get("activityBmr");
+                            Object latestWeightObject = data.get("latestWeight");
+                            if (latestWeightObject != null) {
+                                latestWeight = ((Number) latestWeightObject).doubleValue();
+                            } else {
+                                sendToGetInfo(false);
                             }
-                        } else {
-                            Log.e("Firestore", "Error: " + Objects.requireNonNull(task.getException()).getMessage(), task.getException());
+                            Object heightObject = data.get("height");
+                            if (heightObject != null) {
+                                height = ((Number) heightObject).doubleValue();
+                            } else {
+                                sendToGetInfo(true);
+                            }
+                            Object activityLevelObject = data.get("activityLevelMultiplier");
+                            if (activityLevelObject != null) {
+                                activityLevel =  ((Number) activityLevelObject).doubleValue();
+                            } else {
+                                sendToGetInfo(true);
+                            }
+                            age = (Double) data.get("age");
+                            sex = (String) data.get("sex");
                         }
+                    } else {
+                        Log.e("Firestore", "Error: " + Objects.requireNonNull(task.getException()).getMessage(), task.getException());
                     }
                 });
     }
 
-    private void sendToGetInfo(boolean putExtraWeight) {
+    private void sendToGetInfo(boolean weightExists) {
         Intent intent = new Intent(getApplicationContext(), GetAdditionalInfo.class);
-        intent.putExtra("weightExists", putExtraWeight);
+        intent.putExtra("weightExists", weightExists);
         startActivity(intent);
         finish();
     }

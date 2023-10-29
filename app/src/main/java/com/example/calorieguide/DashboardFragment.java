@@ -1,5 +1,7 @@
 package com.example.calorieguide;
 
+import static java.lang.Math.round;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -20,6 +22,8 @@ import com.anychart.enums.Position;
 import com.anychart.scales.OrdinalColor;
 
 import android.widget.TextView;
+
+import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,9 +37,9 @@ public class DashboardFragment extends Fragment {
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     DecimalFormat df = new DecimalFormat("0.0");
-    String uIDDB, email;
+    String uIDDB, email, sex;
     Long bmr;
-    double weight, height;
+    double weight, height, activityLevel,age;
     String formattedBMI;
     private boolean isChartLoading = false;
     AnyChartView anyChartView;
@@ -49,17 +53,22 @@ public class DashboardFragment extends Fragment {
         // get all values from mainActivity and update UI
         MainActivity mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
+        mainActivity.getValuesFromDB();
         uIDDB = mainActivity.uIDDB;
         email = mainActivity.email;
         bmr = mainActivity.bmr;
+        age = mainActivity.age;
         weight = mainActivity.latestWeight;
         height = mainActivity.height;
+        activityLevel = mainActivity.activityLevel;
+        sex = mainActivity.sex;
 
         user = mainActivity.user;
         assert user != null;
 
         // Set Up BMR
         setupBMRdesc(view);
+        updateBMR();
 
         // Set Up BMI
         setupBMI(view);
@@ -77,6 +86,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupBMI(View view) {
+
         double bmi = calculateBMI();
         TextView bmiText = view.findViewById(R.id.dashboard_txtBMI);
         TextView bmiTextCategory = view.findViewById(R.id.dashboard_txtBMICategory);
@@ -147,8 +157,6 @@ public class DashboardFragment extends Fragment {
         }
         }
 
-
-
     private void getToHealthyWeight(View view, String category, double bmi) {
         TextView txtGetToHealthy = view.findViewById(R.id.dashboard_txtBMICategory_health);
         boolean aboveHealthy = false;
@@ -207,5 +215,17 @@ public class DashboardFragment extends Fragment {
     private void setupBMRdesc(View view) {
         TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
         txtBMR.setText("Your approximate BMR: " + bmr);
+    }
+
+    private void updateBMR(){
+        long updatedBMR = 0;
+        double BMR = 0;
+        if (sex.equals("Female")){
+            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+        } else if (sex.equals("Male")) {
+            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+        }
+        updatedBMR = round(BMR * activityLevel);
+        dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
     }
 }
