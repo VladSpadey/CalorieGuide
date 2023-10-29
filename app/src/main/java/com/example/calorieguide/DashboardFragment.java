@@ -15,6 +15,7 @@ import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.SingleValueDataSet;
 import com.anychart.charts.LinearGauge;
+import com.anychart.core.lineargauge.pointers.Marker;
 import com.anychart.enums.Layout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
@@ -135,7 +136,10 @@ public class DashboardFragment extends Fragment {
             linearGauge.marker(0)
                     .type(MarkerType.TRIANGLE_DOWN)
                     .color("white")
-                    .zIndex(15);
+                    .zIndex(1)
+                    .width("15")
+                    .offset(-3);
+
 
             linearGauge.scale()
                     .minimum(0)
