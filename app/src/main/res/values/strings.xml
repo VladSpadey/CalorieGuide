@@ -68,6 +68,8 @@
     <string name="bmr_description">If you consume less calories than your Basal Metabolic Rate (BMR) combined with your activity level per day, you will lose weight. If you consume more calories than that, you will gain weight instead.</string>
     <string name="category">Category:</string>
     <string name="what_did_you_eat_today">What did you eat today?</string>
+    <string name="info">Info</string>
+    <string name="label">Label</string>
 
 
 </resources>

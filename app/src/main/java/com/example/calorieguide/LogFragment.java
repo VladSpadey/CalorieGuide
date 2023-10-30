@@ -10,10 +10,15 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.calorieguide.Utils.FoodAdapter;
 import com.example.calorieguide.Utils.apiRequest;
@@ -33,16 +38,53 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     private static final int LOADER_ID = 1;
     private String query;
     Gson gson;
+    EditText foodInput;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_log, container, false);
-        query = "Salmon";
+        query = "";
         gson = new Gson();
+
+        inputListener();
 
         if(!query.isEmpty())
                 LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this).forceLoad();
         return view;
+    }
+
+    private void inputListener() {
+        foodInput = view.findViewById(R.id.food_input);
+        Handler handler = new Handler();
+        final Runnable[] runnable = {null};
+        foodInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(runnable[0]);
+                runnable[0] = new Runnable() {
+                    @Override
+                    public void run() {
+                        String text = s.toString();
+                        query = text;
+                        if(!query.isEmpty()){
+                            LoaderManager.getInstance(LogFragment.this).restartLoader(LOADER_ID, null, LogFragment.this).forceLoad();
+                        }
+
+                    }
+                };
+                handler.postDelayed(runnable[0], 1000);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @NonNull
@@ -65,11 +107,31 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
 
                     String label = foodObject.getString("label");
 
+                    // Extract nutrients
+                    JSONObject nutrientsObject = foodObject.getJSONObject("nutrients");
+                    double energyKcal = 0, protein = 0, fat = 0, carbohydrates = 0, fiber = 0;
+                    if (nutrientsObject.has("ENERC_KCAL")){
+                        energyKcal = nutrientsObject.getDouble("ENERC_KCAL");
+                    }
+                    if (nutrientsObject.has("PROCNT")){
+                        protein = nutrientsObject.getDouble("PROCNT");
+                    }
+                    if (nutrientsObject.has("FAT")){
+                        fat = nutrientsObject.getDouble("FAT");
+                    }
+                    if (nutrientsObject.has("CHOCDF")){
+                        carbohydrates = nutrientsObject.getDouble("CHOCDF");
+                    }
+                    if (nutrientsObject.has("FIBTG")){
+                        fiber = nutrientsObject.getDouble("FIBTG");
+                    }
+
+
                     JSONArray measuresArray = hintObject.getJSONArray("measures");
+
                     if (measuresArray.length() > 0) {
                         List<String> weightLabels = new ArrayList<>();
                         List<Integer> weights = new ArrayList<>();
-
                         for (int j = 0; j < measuresArray.length(); j++) {
                             JSONObject measureObject = measuresArray.getJSONObject(j);
                             String weightLabel = measureObject.getString("label");
@@ -84,7 +146,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                         }
 
                         if (!weightLabels.isEmpty() && !weights.isEmpty()) {
-                            foodModel item = new foodModel(label, weightLabels, weights);
+                            foodModel item = new foodModel(label, weightLabels, weights, energyKcal, protein, fat, carbohydrates, fiber);
                             foodList.add(item);
                         }
                     }
@@ -93,6 +155,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                 for (foodModel item : foodList) {
                     Log.d("GSON", "Label: " + item.getLabel() + ", Weights: " + item.getWeights() + ", Weight Labels: " + item.getWeightLabels());
                 }
+
                 RecyclerView recyclerView = view.findViewById(R.id.food_list_view);
                 FoodAdapter adapter = new FoodAdapter(foodList);
                 recyclerView.setAdapter(adapter);
