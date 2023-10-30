@@ -22,9 +22,10 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_log, container, false);
-        query = "fish and chips";
+        query = "kitkat bar";
 
-        LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this).forceLoad();
+        if(!query.isEmpty())
+                LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this).forceLoad();
         return view;
     }
 

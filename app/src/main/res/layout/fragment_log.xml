@@ -9,6 +9,7 @@
     android:orientation="vertical" >
 
     <EditText
+        android:id="@+id/food_input"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@color/dark"
@@ -21,14 +22,12 @@
         android:autofillHints=""
         android:inputType="text" />
 
-
-    <!-- Black Overlay -->
-    <View
-        android:id="@+id/overlay"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/food_list_view"
+        android:layout_below="@+id/food_input"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone"
+
         />
 
 </RelativeLayout>

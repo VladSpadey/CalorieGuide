@@ -1,6 +1,7 @@
 package com.example.calorieguide.Utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
@@ -17,15 +18,19 @@ public class apiRequest extends AsyncTaskLoader<String> {
         super(context);
         this.query = query;
     }
+
     @Nullable
     @Override
     public String loadInBackground() {
+
         try {
             String apiKey = "7a44747f0483cf75f0de2c698cfa0a07";
-            String apiID = "eb5024ca";
-            String edamamUrl = "https://api.edamam.com/search";
+            String appID = "eb5024ca";
+            String edamamUrl = "https://api.edamam.com/api/food-database/v2/parser?app_id=" +  appID + "&app_key=" + apiKey + "&ingr=";
+            String edamamType = "&nutrition-type=logging&category=generic-foods";
 
-            String apiUrl = edamamUrl + "?q=" + query + "&app_id=" + apiID + "&app_key=" + apiKey;
+            String apiUrl = edamamUrl +  query + edamamType;
+
             URL url = new URL(apiUrl);
 
             // Open a connection to the URL
