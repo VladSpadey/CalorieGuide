@@ -25,9 +25,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/food_list_view"
         android:layout_below="@+id/food_input"
+        android:layout_above="@+id/emptyView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        />
 
+    <View
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
         />
 
 </RelativeLayout>
