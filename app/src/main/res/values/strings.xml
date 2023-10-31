@@ -70,6 +70,7 @@
     <string name="what_did_you_eat_today">What did you eat today?</string>
     <string name="info">Info</string>
     <string name="label">Label</string>
+    <string name="add_food_to_today_s_intake">add food to today\'s intake</string>
 
 
 </resources>

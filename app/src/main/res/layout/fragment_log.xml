@@ -6,19 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".LogFragment"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/food_input"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:background="@color/dark"
         android:hint="@string/what_did_you_eat_today"
         android:textSize="22sp"
         android:padding="20dp"
         android:textColor="@color/white"
         android:textColorHint="@color/light_gray"
-
         android:autofillHints=""
         android:inputType="text" />
 
