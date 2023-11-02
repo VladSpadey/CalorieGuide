@@ -20,52 +20,51 @@
         android:layout_marginBottom="20dp"
         />
 
-    <RelativeLayout
-        android:id="@+id/profileLayout"
+    <!-- Change user name -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_changeUserName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/settings_txtUserInfo"
-        android:layout_marginBottom="15dp">
+        android:layout_height="60dp"
+        android:text="@string/change_name"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/dark"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="0dp"
+        android:layout_below="@+id/settings_txtUserInfo"
+        android:layout_marginTop="-5dp"
+        android:layout_marginBottom="-5dp"
+        />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_changeUserName"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/change_name"
-            android:layout_centerHorizontal="true"
-            app:backgroundTint="@color/dark"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="0dp"
-            />
+    <!-- Change user Age -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ChangeUserAge"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/change_age"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/dark"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="0dp"
+        android:layout_below="@id/btn_changeUserName"
+        />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_ChangeUserAge"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/change_age"
-            android:layout_centerHorizontal="true"
-            app:backgroundTint="@color/dark"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="0dp"
-            android:layout_below="@id/btn_changeUserName"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_ChangeUserHeight"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/change_height"
-            android:layout_centerHorizontal="true"
-            app:backgroundTint="@color/dark"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="0dp"
-            android:layout_below="@id/btn_ChangeUserAge"
-            />
-
-    </RelativeLayout>
+    <!-- Change user Height -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ChangeUserHeight"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/change_height"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/dark"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="0dp"
+        android:layout_below="@id/btn_ChangeUserAge"
+        android:layout_marginTop="-5dp"
+        android:layout_marginBottom="-5dp"
+        />
 
     <!-- Change Password button -->
     <com.google.android.material.button.MaterialButton
@@ -78,7 +77,7 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:cornerRadius="0dp"
-        android:layout_below="@id/profileLayout"
+        android:layout_below="@id/btn_ChangeUserHeight"
         />
 
     <!-- LogOut button -->

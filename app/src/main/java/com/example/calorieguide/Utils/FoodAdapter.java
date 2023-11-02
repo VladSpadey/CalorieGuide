@@ -34,8 +34,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         String weightLabel = food.getWeightLabels().get(0);
         String weight = String.valueOf(food.getWeights().get(0));
         String cal = String.valueOf(food.getEnergyKcal());
-
-        holder.infoText.setText(weightLabel + " - " + cal +" cals");
+        holder.infoText.setText(weightLabel + " | " + cal +" cals");
     }
 
     @Override
