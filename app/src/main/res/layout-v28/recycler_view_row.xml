@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textColor="@color/white"
-        android:paddingRight="25dp"
+        android:paddingEnd="40dp"
         android:text="@string/label" />
 
     <TextView

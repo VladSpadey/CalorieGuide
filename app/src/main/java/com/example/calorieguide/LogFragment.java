@@ -78,7 +78,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
 
                     }
                 };
-                handler.postDelayed(runnable[0], 1);
+                handler.postDelayed(runnable[0], 500);
             }
 
             @Override
@@ -98,6 +98,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         if (data != null) {
             try {
+                Log.d("API", "data received in Log: " + data);
                 JSONObject jsonObject = new JSONObject(data);
                 List<foodModel> foodList = new ArrayList<>();
                 JSONArray hintsArray = jsonObject.getJSONArray("hints");
@@ -146,7 +147,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                             }
                         }
 
-                        if (!weightLabels.isEmpty() && !weights.isEmpty()) {
+                        if (!weightLabels.isEmpty()) {
                             foodModel item = new foodModel(label, weightLabels, weights, energyKcal, protein, fat, carbohydrates, fiber);
                             foodList.add(item);
                         }
@@ -157,7 +158,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                 FoodAdapter adapter = new FoodAdapter(foodList);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
             } catch (JSONException e) {
                 Log.e("GSON Error", Objects.requireNonNull(e.getMessage()));
             }
