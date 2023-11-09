@@ -11,8 +11,10 @@
     <EditText
         android:id="@+id/food_input"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
         android:layout_height="70dp"
-        android:background="@color/dark"
+        android:background="@drawable/round_corners_dialog"
         android:hint="@string/what_did_you_eat_today"
         android:textSize="22sp"
         android:padding="20dp"
