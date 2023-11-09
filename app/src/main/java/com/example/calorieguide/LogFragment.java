@@ -25,11 +25,13 @@ import com.example.calorieguide.Utils.FoodAdapter;
 import com.example.calorieguide.Utils.apiRequest;
 import com.google.gson.Gson;
 import com.example.calorieguide.Utils.foodModel;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +42,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     private String query;
     Gson gson;
     EditText foodInput;
+    List<foodModel> foodList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,11 +99,11 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+
         if (data != null) {
             try {
-                Log.d("API", "data received in Log: " + data);
                 JSONObject jsonObject = new JSONObject(data);
-                List<foodModel> foodList = new ArrayList<>();
+                foodList = new ArrayList<>();
                 JSONArray hintsArray = jsonObject.getJSONArray("hints");
 
                 for (int i = 0; i < hintsArray.length(); i++) {
@@ -108,6 +111,8 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                     JSONObject foodObject = hintObject.getJSONObject("food");
 
                     String label = foodObject.getString("label");
+
+
 
                     // Extract nutrients
                     JSONObject nutrientsObject = foodObject.getJSONObject("nutrients");
@@ -136,14 +141,16 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                         List<Integer> weights = new ArrayList<>();
                         for (int j = 0; j < measuresArray.length(); j++) {
                             JSONObject measureObject = measuresArray.getJSONObject(j);
-                            String weightLabel = measureObject.getString("label");
-                            int weight = (int) measureObject.getDouble("weight");
+                            if(measureObject.has("label")) {
+                                String weightLabel = measureObject.getString("label");
+                                int weight = (int) measureObject.getDouble("weight");
 
-                            // Exclude specific weight labels
-                            if (!weightLabel.equals("Gram") && !weightLabel.equals("Ounce") && !weightLabel.equals("Pound") && !weightLabel.equals("Kilogram")
-                                    && !weightLabel.equals("Cubic inch") && !weightLabel.isEmpty()) {
-                                weightLabels.add(weightLabel);
-                                weights.add(weight);
+                                // Exclude specific weight labels
+                                if (!weightLabel.equals("Gram") && !weightLabel.equals("Ounce") && !weightLabel.equals("Pound") && !weightLabel.equals("Kilogram")
+                                        && !weightLabel.equals("Cubic inch") && !weightLabel.isEmpty()) {
+                                    weightLabels.add(weightLabel);
+                                    weights.add(weight);
+                                }
                             }
                         }
 
