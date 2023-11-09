@@ -94,6 +94,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        showLoadingBar();
         return new apiRequest(getContext(), query);
     }
 
@@ -160,7 +161,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                         }
                     }
                 }
-
+                hideLoadingBar();
                 RecyclerView recyclerView = view.findViewById(R.id.food_list_view);
                 FoodAdapter adapter = new FoodAdapter(foodList);
                 recyclerView.setAdapter(adapter);
@@ -175,5 +176,16 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
+        hideLoadingBar();
+    }
+
+    private void showLoadingBar() {
+        View loadingContainer = view.findViewById(R.id.loadingBar);
+        loadingContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoadingBar() {
+        View loadingContainer = view.findViewById(R.id.loadingBar);
+        loadingContainer.setVisibility(View.GONE);
     }
 }
