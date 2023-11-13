@@ -18,20 +18,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.calorieguide.Utils.FoodAdapter;
 import com.example.calorieguide.Utils.apiRequest;
 import com.google.gson.Gson;
 import com.example.calorieguide.Utils.foodModel;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -163,7 +159,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                 }
                 hideLoadingBar();
                 RecyclerView recyclerView = view.findViewById(R.id.food_list_view);
-                FoodAdapter adapter = new FoodAdapter(foodList);
+                FoodAdapter adapter = new FoodAdapter(foodList, requireContext());
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             } catch (JSONException e) {
