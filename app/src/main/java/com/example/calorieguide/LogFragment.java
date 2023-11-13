@@ -39,12 +39,15 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     Gson gson;
     EditText foodInput;
     List<foodModel> foodList;
+    View overlay;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_log, container, false);
         query = "";
         gson = new Gson();
+
+        overlay = view.findViewById(R.id.overlay);
 
         inputListener();
 
@@ -159,7 +162,7 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                 }
                 hideLoadingBar();
                 RecyclerView recyclerView = view.findViewById(R.id.food_list_view);
-                FoodAdapter adapter = new FoodAdapter(foodList, requireContext());
+                FoodAdapter adapter = new FoodAdapter(foodList, requireContext(), getLayoutInflater(), overlay);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             } catch (JSONException e) {

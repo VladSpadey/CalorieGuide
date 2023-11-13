@@ -71,6 +71,13 @@
     <string name="info">Info</string>
     <string name="label">Label</string>
     <string name="add_food_to_today_s_intake">add food to today\'s intake</string>
+    <string name="add">Add</string>
+    <string name="food_name">Food Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="food_details">Food Details</string>
+    <string name="quantity_">Quantity:</string>
+    <string name="_1">1</string>
+    <string name="per">Per</string>
 
 
 </resources>

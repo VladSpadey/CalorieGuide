@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/round_corners_dialog"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:padding="15dp"
+    >
+
+    <TextView
+        android:id="@+id/txt_food_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/food_name"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:layout_marginTop="25dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginBottom="30dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_food_per"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:text="@string/per"
+        android:textColor="@color/white"
+        android:textSize="19sp"
+        android:layout_below="@+id/txt_food_name"
+        android:layout_marginBottom="15dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_food_details_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:text="@string/food_details"
+        android:textColor="@color/white"
+        android:textSize="19sp"
+        android:layout_below="@+id/txt_food_per"
+        android:layout_marginBottom="15dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_food_details_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:text="@string/food_details"
+        android:textColor="@color/light_gray"
+        android:textSize="18sp"
+        android:layout_below="@+id/txt_food_details_1"
+        />
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_food_details_2"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/txtKG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/quantity_"
+                android:textColor="@color/white"
+                android:layout_columnWeight="0"/>
+
+            <EditText
+                android:id="@+id/edit_quantity"
+                android:text="@string/_1"
+                android:inputType="numberDecimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textColorHint="@color/light_gray"
+                android:padding="20dp"
+                android:importantForAutofill="no"
+                android:layout_columnWeight="1"
+                />
+
+
+        </GridLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_food_add"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:text="@string/add"
+        android:layout_centerHorizontal="true"
+        app:backgroundTint="@color/accent"
+        android:layout_marginBottom="12dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cornerRadius="8dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        android:layout_below="@+id/gridLayout"
+        />
+
+</RelativeLayout>
