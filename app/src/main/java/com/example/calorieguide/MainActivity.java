@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     double latestWeight, height;
 
     List<DataEntry> weightChartValues;
-    Boolean variablesFetched = false;
+
 
 
 

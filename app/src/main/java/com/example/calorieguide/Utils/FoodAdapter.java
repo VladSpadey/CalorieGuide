@@ -66,15 +66,23 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(context);
         View view = inflater.inflate(R.layout.dailog_food_detail, null);
 
-        
+        TextView name = view.findViewById(R.id.txt_food_name);
+        TextView per = view.findViewById(R.id.txt_food_per);
+        TextView cal = view.findViewById(R.id.txt_food_details_1);
+        TextView details = view.findViewById(R.id.txt_food_details_2);
+        EditText quantity = view.findViewById(R.id.edit_quantity);
+        Button btn_add = view.findViewById(R.id.btn_food_add);
 
-
-        String details = "Label: " + food.getLabel() + "\n" +
+        name.setText(food.getLabel());
+        per.setText(String.format("Per: %s", food.getWeightLabels().get(0)));
+        cal.setText(String.format("Energy: %s cals", food.getEnergyKcal()));
+        details.setText(String.format("Protein: %s g\nFat: %s g\nCarbohydrates: %s g\nFiber: %s g\n", food.getProtein(), food.getFat(), food.getCarbohydrates(), food.getFiber()));
+        /*String details = "Label: " + food.getLabel() + "\n" +
                 "Energy: " + food.getEnergyKcal() + " cals\n" +
                 "Protein: " + food.getProtein() + " g\n" +
                 "Fat: " + food.getFat() + " g\n" +
                 "Carbohydrates: " + food.getCarbohydrates() + " g\n" +
-                "Fiber: " + food.getFiber() + " g\n";
+                "Fiber: " + food.getFiber() + " g\n";*/
 
         alertDialogBuilder.setView(view);
         final AlertDialog alertDialog = alertDialogBuilder.create();
