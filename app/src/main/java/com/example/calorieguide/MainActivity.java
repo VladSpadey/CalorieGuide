@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Firestore", "id: " + uid);
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             userData = document.getData();
                             uIDDB = (String) userData.get("uid");

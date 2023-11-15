@@ -8,19 +8,14 @@ import androidx.annotation.NonNull;
 
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.example.calorieguide.MainActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,27 +108,62 @@ public class dbUtil {
                     // Handle the error in case of failure
                 });
     }
-    public static void addIntake(foodModel food, double quantity){
+    public static void addIntake(foodModel food, double quantity) {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         Map<String, Object> intakeData = new HashMap<>();
 
         String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
 
+        String label = food.getLabel();
         Double kcal = food.getEnergyKcal() * quantity;
+        Double fat = food.getFat() * quantity;
+        Double fiber = food.getFiber() * quantity;
+        Double carbo = food.getCarbohydrates() * quantity;
+        Double protein = food.getCarbohydrates() * quantity;
 
-        intakeData.put("kcal", kcal);
+        Map<String, Object> foodItemData = new HashMap<>();
+        foodItemData.put("label", label);
+        foodItemData.put("quantity", quantity);
+        foodItemData.put("kcal", kcal);
+        foodItemData.put("fat", fat);
+        foodItemData.put("fiber", fiber);
+        foodItemData.put("carbo", carbo);
+        foodItemData.put("protein", protein);
+        foodItemData.put("food", food);
 
-        CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake");
-        DocumentReference documentRef = collectionRef.document(currentDate);
-        documentRef.set(intakeData)
+        CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake").document(currentDate).collection("food");
+        DocumentReference documentRef = collectionRef.document(label);
+        documentRef.set(foodItemData)
                 .addOnSuccessListener(documentReference -> {
-                    // Data added successfully
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error in case of failure
                 });
     }
+   /* public static Map<String, Double> getIntake(String todaysDate){
+        Map<String, Double> intake = new HashMap<String, Double>();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        String label;
+        Double kcal;
+
+
+        String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
+        CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake").document(currentDate).collection("food");
+        collectionRef.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        label = (String) document.get("label");
+                        kcal = (Double) document.get("kcal");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error
+                });
+
+        Log.d(TAG, "getIntake: " + label + " "  + kcal);
+        return intake;
+    } */
     public static List<DataEntry> getWeightChartValues() {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
