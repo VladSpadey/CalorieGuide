@@ -113,7 +113,27 @@ public class dbUtil {
                     // Handle the error in case of failure
                 });
     }
+    public static void addIntake(foodModel food, double quantity){
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        Map<String, Object> intakeData = new HashMap<>();
 
+        String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
+
+        Double kcal = food.getEnergyKcal() * quantity;
+
+        intakeData.put("kcal", kcal);
+
+        CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake");
+        DocumentReference documentRef = collectionRef.document(currentDate);
+        documentRef.set(intakeData)
+                .addOnSuccessListener(documentReference -> {
+                    // Data added successfully
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error in case of failure
+                });
+    }
     public static List<DataEntry> getWeightChartValues() {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
