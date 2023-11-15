@@ -122,7 +122,6 @@ public class dbUtil {
 
         Double kcal = food.getEnergyKcal() * quantity;
 
-        intakeData.put("date", currentDate);
         intakeData.put("kcal", kcal);
 
         CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake");

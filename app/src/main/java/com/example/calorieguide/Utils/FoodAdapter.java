@@ -65,7 +65,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private void showDetailsDialog(foodModel food) {
         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(context);
         View view = inflater.inflate(R.layout.dailog_food_detail, null);
-        final AlertDialog alertDialog = alertDialogBuilder.create();
+
 
         TextView name = view.findViewById(R.id.txt_food_name);
         TextView per = view.findViewById(R.id.txt_food_per);
@@ -73,7 +73,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         TextView details = view.findViewById(R.id.txt_food_details_2);
         EditText edit_quantity = view.findViewById(R.id.edit_quantity);
         Button btn_add = view.findViewById(R.id.btn_food_add);
-
+        alertDialogBuilder.setView(view);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
         name.setText(food.getLabel());
         per.setText(String.format("Per: %s", food.getWeightLabels().get(0)));
         cal.setText(String.format("Energy: %s cals", food.getEnergyKcal()));
@@ -84,13 +85,12 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             if (!quantityString.isEmpty()) {
                 double q = Double.parseDouble(quantityString);
                 dbUtil.addIntake(food, q);
-                alertDialog.dismiss();
+                //alertDialog.dismiss();
             } else {
                 Toast.makeText(context, "Quantity needs to have a value.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        alertDialogBuilder.setView(view);
 
         overlay.setVisibility(View.VISIBLE);
         alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
