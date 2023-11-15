@@ -65,29 +65,34 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private void showDetailsDialog(foodModel food) {
         androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(context);
         View view = inflater.inflate(R.layout.dailog_food_detail, null);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
 
         TextView name = view.findViewById(R.id.txt_food_name);
         TextView per = view.findViewById(R.id.txt_food_per);
         TextView cal = view.findViewById(R.id.txt_food_details_1);
         TextView details = view.findViewById(R.id.txt_food_details_2);
-        EditText quantity = view.findViewById(R.id.edit_quantity);
+        EditText edit_quantity = view.findViewById(R.id.edit_quantity);
         Button btn_add = view.findViewById(R.id.btn_food_add);
 
         name.setText(food.getLabel());
         per.setText(String.format("Per: %s", food.getWeightLabels().get(0)));
         cal.setText(String.format("Energy: %s cals", food.getEnergyKcal()));
         details.setText(String.format("Protein: %s g\nFat: %s g\nCarbohydrates: %s g\nFiber: %s g\n", food.getProtein(), food.getFat(), food.getCarbohydrates(), food.getFiber()));
-        /*String details = "Label: " + food.getLabel() + "\n" +
-                "Energy: " + food.getEnergyKcal() + " cals\n" +
-                "Protein: " + food.getProtein() + " g\n" +
-                "Fat: " + food.getFat() + " g\n" +
-                "Carbohydrates: " + food.getCarbohydrates() + " g\n" +
-                "Fiber: " + food.getFiber() + " g\n";*/
+
+        btn_add.setOnClickListener(v->{
+            String quantityString = edit_quantity.getText().toString();
+            if (!quantityString.isEmpty()) {
+                double q = Double.parseDouble(quantityString);
+                dbUtil.addIntake(food, q);
+                alertDialog.dismiss();
+            } else {
+                Toast.makeText(context, "Quantity needs to have a value.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         alertDialogBuilder.setView(view);
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-        overlay.setVisibility(View.VISIBLE);
 
+        overlay.setVisibility(View.VISIBLE);
         alertDialog.setOnDismissListener(v2 -> overlay.setVisibility(View.GONE));
         alertDialog.show();
     }
