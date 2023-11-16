@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Double activityLevel, age;
     double latestWeight, height;
     List<DataEntry> weightChartValues;
+    List<Map<String, Object>> intake;
 
 
 
@@ -82,12 +83,15 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateValuesFromDB();
             updateWeightValues();
+            updateIntakeValues();
         }
     }
 
+    private void updateIntakeValues() {
+        intake = dbUtil.getIntake();
+    }
     public void updateWeightValues(){
         weightChartValues = dbUtil.getWeightChartValues();
-
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -109,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                             uIDDB = (String) userData.get("uid");
                             email = (String) userData.get("email");
                             bmr = (Long) userData.get("activityBmr");
+
                             Object latestWeightObject = userData.get("latestWeight");
                             if (latestWeightObject != null) {
                                 latestWeight = ((Number) latestWeightObject).doubleValue();

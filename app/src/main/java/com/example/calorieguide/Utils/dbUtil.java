@@ -2,6 +2,7 @@ package com.example.calorieguide.Utils;
 
 import static java.lang.Math.round;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -140,30 +141,42 @@ public class dbUtil {
                 .addOnFailureListener(e -> {
                 });
     }
-   /* public static Map<String, Double> getIntake(String todaysDate){
-        Map<String, Double> intake = new HashMap<String, Double>();
+   public static List<Map<String, Object>> getIntake(){
+        List<Map<String, Object>> intake = new ArrayList<Map<String, Object>>();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        String label;
-        Double kcal;
-
-
         String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
         CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake").document(currentDate).collection("food");
         collectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        label = (String) document.get("label");
-                        kcal = (Double) document.get("kcal");
+                        Map<String, Object> intakeItem = new HashMap<>();
+                        String label = (String) document.get("label");
+                        Double kcal = (Double) document.get("kcal");
+                        Double carbo = (Double) document.get("carbo");
+                        Double protein = (Double) document.get("protein");
+                        Double fiber = (Double) document.get("fiber");
+                        Double fat = (Double) document.get("fat");
+                        Double quantity = (Double) document.get("quantity");
+                        Map<String, Object> food = (Map<String, Object>) document.get("food");
+                        //foodModel food = (foodModel)  document.get("food");
+                        intakeItem.put("label", label);
+                        intakeItem.put("kcal", kcal);
+                        intakeItem.put("carbo", carbo);
+                        intakeItem.put("protein", protein);
+                        intakeItem.put("fiber", fiber);
+                        intakeItem.put("fat", fat);
+                        intakeItem.put("quantity", quantity);
+                        intakeItem.put("food", food);
+                        intake.add(intakeItem);
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
                 });
+       return intake;
+    }
 
-        Log.d(TAG, "getIntake: " + label + " "  + kcal);
-        return intake;
-    } */
     public static List<DataEntry> getWeightChartValues() {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -171,7 +184,6 @@ public class dbUtil {
         List<DataEntry> chartData= new ArrayList<>();
         weightCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String date = document.getString("date");
                         double weight = document.getDouble("weight");
