@@ -1,16 +1,15 @@
 package com.example.calorieguide;
 
-import static java.lang.Math.round;
-
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
@@ -21,19 +20,12 @@ import com.anychart.chart.common.listener.Event;
 import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.LinearGauge;
 import com.anychart.charts.Pie;
-import com.anychart.core.lineargauge.pointers.Marker;
 import com.anychart.enums.Align;
 import com.anychart.enums.Layout;
 import com.anychart.enums.LegendLayout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
 import com.anychart.scales.OrdinalColor;
-
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -70,7 +62,6 @@ public class DashboardFragment extends Fragment {
         loadingBar.setVisibility(View.VISIBLE);
         if (mainActivity.userData == null || mainActivity.userData.isEmpty()) {
             // User data is not available yet, schedule a delayed callback
-
             new Handler().postDelayed(() -> {
                 user = mainActivity.user;
                 uID = (String) mainActivity.userData.get("uid");
@@ -133,20 +124,37 @@ public class DashboardFragment extends Fragment {
 
         Pie pie = AnyChart.pie();
 
-        /*pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
+        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
             @Override
             public void onClick(Event event) {
                 Toast.makeText(getContext(), event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
 
         List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("Apples", 6));
-        data.add(new ValueDataEntry("Pears", 72));
+        data.add(new ValueDataEntry("Apples", 50));
+        data.add(new ValueDataEntry("Pears", 20));
+        data.add(new ValueDataEntry("Bananas", 5));
+        data.add(new ValueDataEntry("Grapes", 10));
+        data.add(new ValueDataEntry("Oranges", 5));
+
         pie.data(data);
+
         pie.title("Fruits imported in 2015 (in kg)");
 
+        pie.labels().position("outside");
 
+        pie.legend().title().enabled(true);
+        pie.legend().title()
+                .text("Retail channels")
+                .padding(0d, 0d, 10d, 0d);
+
+        pie.legend().position("center-bottom")
+                .itemsLayout(LegendLayout.HORIZONTAL)
+                .align(Align.CENTER);
+
+        pie.background().enabled(true);
+        pie.background().fill("#111111");
 
         anyChartView.setChart(pie);
     }

@@ -9,12 +9,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".DashboardFragment"
         android:background="@color/black"
         android:orientation="vertical">
-
-
 
         <TextView
             android:id="@+id/dashboard_txtDashboard"
@@ -62,9 +60,9 @@
                 android:id="@+id/intake_progress_bar"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:visibility="gone"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"/>
+                android:visibility="visible"
+                android:layout_marginTop="75dp"
+                android:layout_marginLeft="60dp"/>
 
         </RelativeLayout>
 
@@ -194,6 +192,5 @@
             android:layout_below="@+id/dashboard_layout_bmr"
             android:layout_marginTop="12dp"
             />
-
     </RelativeLayout>
 </ScrollView>
