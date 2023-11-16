@@ -85,11 +85,13 @@ public class MainActivity extends AppCompatActivity {
             updateWeightValues();
             updateIntakeValues();
         }
+
     }
 
     private void updateIntakeValues() {
         intake = dbUtil.getIntake();
     }
+
     public void updateWeightValues(){
         weightChartValues = dbUtil.getWeightChartValues();
     }

@@ -1,155 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardFragment"
-    android:background="@color/black"
-    android:orientation="vertical">
+    >
 
-    <TextView
-        android:id="@+id/dashboard_txtDashboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dashboard"
-        android:textColor="@color/white"
-        android:textSize="26sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        />
-
-    <!-- Calorie Intake Layout -->
     <RelativeLayout
-        android:id="@+id/dashboard_layout_calorie"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/round_corners_dialog"
-        android:layout_below="@id/dashboard_txtDashboard"
-        android:layout_marginTop="25dp">
+        android:layout_height="match_parent"
+        tools:context=".DashboardFragment"
+        android:background="@color/black"
+        android:orientation="vertical">
+
+
 
         <TextView
-            android:id="@+id/dashboard_txtCalorieIntake"
+            android:id="@+id/dashboard_txtDashboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/calorie_intake"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:text="@string/dashboard"
             android:textColor="@color/white"
-            android:textSize="19sp"/>
+            android:textSize="26sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            />
 
-    </RelativeLayout>
-
-    <!-- BMI Layout -->
-    <RelativeLayout
-        android:id="@+id/dashboard_layout_bmi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/round_corners_dialog"
-        android:layout_below="@id/dashboard_layout_calorie"
-        android:layout_marginTop="25dp">
-
-        <com.anychart.AnyChartView
-            android:id="@+id/bmi_chart_view"
+        <!-- Calorie Intake Layout -->
+        <RelativeLayout
+            android:id="@+id/dashboard_layout_calorie"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/round_corners_dialog"
+            android:layout_below="@id/dashboard_txtDashboard"
+            android:layout_marginTop="25dp">
 
+            <TextView
+                android:id="@+id/dashboard_txtCalorieIntake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/calorie_intake"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/white"
+                android:textSize="19sp"/>
+
+            <com.anychart.AnyChartView
+                android:id="@+id/intake_pie_view"
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="25dp"/>
+
+            <ProgressBar
+                android:id="@+id/intake_progress_bar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
+
+        </RelativeLayout>
+
+        <!-- BMI Layout -->
+        <RelativeLayout
+            android:id="@+id/dashboard_layout_bmi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/round_corners_dialog"
+            android:layout_below="@id/dashboard_layout_calorie"
+            android:layout_marginTop="15dp">
+
+            <com.anychart.AnyChartView
+                android:id="@+id/bmi_chart_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp" />
+
+            <ProgressBar
+                android:id="@+id/bmi_progress_bar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/dashboard_txtBMI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/your_body_mass_weight_bmi_is"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/white"
+                android:layout_below="@id/bmi_chart_view"
+                android:textSize="19sp"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/dashboard_txtBMICategory_health"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text=""
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/white"
+                android:layout_below="@id/dashboard_txtBMI"
+                android:textSize="19sp"
+                android:paddingTop="5dp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/dashboard_txtBMICategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/category"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/white"
+                android:layout_below="@id/dashboard_txtBMICategory_health"
+                android:paddingTop="5dp"
+                android:textSize="19sp"
+                android:layout_marginBottom="15dp"/>
+
+        </RelativeLayout>
+
+        <!-- BMR Layout -->
+        <RelativeLayout
+            android:id="@+id/dashboard_layout_bmr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/round_corners_dialog"
+            android:layout_below="@id/dashboard_layout_bmi"
+            android:layout_marginTop="15dp"
+            >
+
+            <TextView
+                android:id="@+id/dashboard_txtBMR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/your_approximate_bmr"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:paddingTop="20dp"/>
+
+            <TextView
+                android:id="@+id/dashboard_txtBMRdescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dashboard_txtBMR"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="30dp"
+                android:text="@string/bmr_description"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+        </RelativeLayout>
         <ProgressBar
-            android:id="@+id/bmi_progress_bar"
+            android:id="@+id/loadingBar"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:visibility="gone"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/dashboard_txtBMI"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/your_body_mass_weight_bmi_is"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/white"
-            android:layout_below="@id/bmi_chart_view"
-            android:textSize="19sp"
-            android:layout_marginTop="15dp"/>
-
-        <TextView
-            android:id="@+id/dashboard_txtBMICategory_health"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text=""
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/white"
-            android:layout_below="@id/dashboard_txtBMI"
-            android:textSize="19sp"
-            android:paddingTop="5dp"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/dashboard_txtBMICategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/category"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/white"
-            android:layout_below="@id/dashboard_txtBMICategory_health"
-            android:paddingTop="5dp"
-            android:textSize="19sp"
-            android:layout_marginBottom="15dp"/>
-
-    </RelativeLayout>
-
-    <!-- BMR Layout -->
-    <RelativeLayout
-        android:id="@+id/dashboard_layout_bmr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/round_corners_dialog"
-        android:layout_below="@id/dashboard_layout_bmi"
-        android:layout_marginTop="25dp">
-
-        <TextView
-            android:id="@+id/dashboard_txtBMR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/your_approximate_bmr"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/white"
-            android:textSize="19sp"
-            android:paddingTop="20dp"/>
-
-        <TextView
-            android:id="@+id/dashboard_txtBMRdescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/dashboard_txtBMR"
-            android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="20dp"
-            android:text="@string/bmr_description"
-            android:textColor="@color/white"
-            android:textSize="17sp" />
+            android:background="@drawable/round_corners_dialog"
+            android:padding="5dp"
+            android:visibility="visible" />
+        <View
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/dashboard_layout_bmr"
+            android:layout_marginTop="12dp"
+            />
 
     </RelativeLayout>
-
-</RelativeLayout>
+</ScrollView>

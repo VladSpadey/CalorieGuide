@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,24 @@ import android.view.ViewGroup;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.SingleValueDataSet;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.chart.common.listener.Event;
+import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.LinearGauge;
+import com.anychart.charts.Pie;
 import com.anychart.core.lineargauge.pointers.Marker;
+import com.anychart.enums.Align;
 import com.anychart.enums.Layout;
+import com.anychart.enums.LegendLayout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
 import com.anychart.scales.OrdinalColor;
 
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +39,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
@@ -52,27 +64,56 @@ public class DashboardFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
 
-        // User Data
         mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
-        user = mainActivity.user;
-        uID = (String) mainActivity.userData.get("uid");
-        email = (String) mainActivity.userData.get("email");
-        bmr = (Long) mainActivity.userData.get("activityBmr");
-        age = (double) mainActivity.userData.get("age");
-        weight = (double) mainActivity.userData.get("latestWeight");
-        height = (double) mainActivity.userData.get("height");
-        activityLevel = mainActivity.activityLevel;
-        sex = mainActivity.sex;
+        ProgressBar loadingBar = view.findViewById(R.id.loadingBar);
+        loadingBar.setVisibility(View.VISIBLE);
+        if (mainActivity.userData == null || mainActivity.userData.isEmpty()) {
+            // User data is not available yet, schedule a delayed callback
 
-        user = mainActivity.user;
-        assert user != null;
+            new Handler().postDelayed(() -> {
+                user = mainActivity.user;
+                uID = (String) mainActivity.userData.get("uid");
+                email = (String) mainActivity.userData.get("email");
+                bmr = (Long) mainActivity.userData.get("activityBmr");
+                age = (double) mainActivity.userData.get("age");
+                weight = (double) mainActivity.userData.get("latestWeight");
+                height = (double) mainActivity.userData.get("height");
+                activityLevel = mainActivity.activityLevel;
+                sex = mainActivity.sex;
 
-        // Set Up BMR
-        setupBMRdesc(view);
+                user = mainActivity.user;
+                assert user != null;
 
-        // Set Up BMI
-        setupBMI(view);
+                // Set Up Intake Display
+                setupIntakeChart(view);
+                // Set Up BMR
+                setupBMRdesc(view);
+                // Set Up BMI
+                setupBMI(view);
+                loadingBar.setVisibility(View.GONE);
+            }, 3000);
+        } else {
+            user = mainActivity.user;
+            uID = (String) mainActivity.userData.get("uid");
+            email = (String) mainActivity.userData.get("email");
+            bmr = (Long) mainActivity.userData.get("activityBmr");
+            age = (double) mainActivity.userData.get("age");
+            weight = (double) mainActivity.userData.get("latestWeight");
+            height = (double) mainActivity.userData.get("height");
+            activityLevel = mainActivity.activityLevel;
+            sex = mainActivity.sex;
+            user = mainActivity.user;
+            assert user != null;
+
+            // Set Up Intake Display
+            setupIntakeChart(view);
+            // Set Up BMR
+            setupBMRdesc(view);
+            // Set Up BMI
+            setupBMI(view);
+            loadingBar.setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -85,7 +126,32 @@ public class DashboardFragment extends Fragment {
             anyChartView = null;
         }
     }
+    // Food Intake Functions
+    public void setupIntakeChart(View view){
+        AnyChartView anyChartView = view.findViewById(R.id.intake_pie_view);
+        anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
 
+        Pie pie = AnyChart.pie();
+
+        /*pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
+            @Override
+            public void onClick(Event event) {
+                Toast.makeText(getContext(), event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+        List<DataEntry> data = new ArrayList<>();
+        data.add(new ValueDataEntry("Apples", 6));
+        data.add(new ValueDataEntry("Pears", 72));
+        pie.data(data);
+        pie.title("Fruits imported in 2015 (in kg)");
+
+
+
+        anyChartView.setChart(pie);
+    }
+
+    // BMI Functions
     private void setupBMI(View view) {
 
         double bmi = calculateBMI();
@@ -106,7 +172,6 @@ public class DashboardFragment extends Fragment {
         }
 
     }
-
     private void setupBMIChart(View view) {
         if (isChartLoading){
             anyChartView = view.findViewById(R.id.bmi_chart_view);
@@ -160,7 +225,6 @@ public class DashboardFragment extends Fragment {
             anyChartView.setChart(linearGauge);
         }
         }
-
     private void getToHealthyWeight(View view, String category, double bmi) {
         TextView txtGetToHealthy = view.findViewById(R.id.dashboard_txtBMICategory_health);
         boolean aboveHealthy = false;
@@ -195,7 +259,6 @@ public class DashboardFragment extends Fragment {
             txtGetToHealthy.setVisibility(View.VISIBLE);
         }
     }
-
     private String getCategory(double bmi) {
         String category = "";
         if(bmi < 18.5){
@@ -210,12 +273,12 @@ public class DashboardFragment extends Fragment {
         return category;
     }
 
+    // BMR Functions
     private double calculateBMI() {
         double heightInM = height / 100;
         double HxH = heightInM * heightInM;
         return weight / HxH;
     }
-
     private void setupBMRdesc(View view) {
         TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
         txtBMR.setText("Your approximate BMR: " + bmr);
