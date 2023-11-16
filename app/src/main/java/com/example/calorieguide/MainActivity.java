@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Double activityLevel, age;
     double latestWeight, height;
     List<DataEntry> weightChartValues;
+    List<Map<String, Object>> intake;
 
 
 
@@ -82,12 +83,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateValuesFromDB();
             updateWeightValues();
+            updateIntakeValues();
         }
+
+    }
+
+    private void updateIntakeValues() {
+        intake = dbUtil.getIntake();
     }
 
     public void updateWeightValues(){
         weightChartValues = dbUtil.getWeightChartValues();
-
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -104,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
         Task<QuerySnapshot> query = docRef.whereEqualTo("uid", uid).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Firestore", "id: " + uid);
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             userData = document.getData();
                             uIDDB = (String) userData.get("uid");
                             email = (String) userData.get("email");
                             bmr = (Long) userData.get("activityBmr");
+
                             Object latestWeightObject = userData.get("latestWeight");
                             if (latestWeightObject != null) {
                                 latestWeight = ((Number) latestWeightObject).doubleValue();

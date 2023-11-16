@@ -85,7 +85,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             if (!quantityString.isEmpty()) {
                 double q = Double.parseDouble(quantityString);
                 dbUtil.addIntake(food, q);
-                //alertDialog.dismiss();
+                Toast.makeText(context, "Item added successfully", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
             } else {
                 Toast.makeText(context, "Quantity needs to have a value.", Toast.LENGTH_SHORT).show();
             }
