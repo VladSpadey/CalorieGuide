@@ -141,8 +141,12 @@ public class dbUtil {
                 .addOnFailureListener(e -> {
                 });
     }
-   public static List<Map<String, Object>> getIntake(){
-        List<Map<String, Object>> intake = new ArrayList<Map<String, Object>>();
+    public interface IntakeCallback {
+        void onIntakeReceived(List<Map<String, Object>> intake);
+    }
+
+    public static void getIntake(IntakeCallback callback) {
+        List<Map<String, Object>> intake = new ArrayList<>();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
@@ -159,7 +163,7 @@ public class dbUtil {
                         Double fat = (Double) document.get("fat");
                         Double quantity = (Double) document.get("quantity");
                         Map<String, Object> food = (Map<String, Object>) document.get("food");
-                        //foodModel food = (foodModel)  document.get("food");
+
                         intakeItem.put("label", label);
                         intakeItem.put("kcal", kcal);
                         intakeItem.put("carbo", carbo);
@@ -168,13 +172,14 @@ public class dbUtil {
                         intakeItem.put("fat", fat);
                         intakeItem.put("quantity", quantity);
                         intakeItem.put("food", food);
+
                         intake.add(intakeItem);
                     }
+                    callback.onIntakeReceived(intake);
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
                 });
-       return intake;
     }
 
     public static List<DataEntry> getWeightChartValues() {
