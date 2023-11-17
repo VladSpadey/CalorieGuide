@@ -117,20 +117,25 @@ public class dbUtil {
         String currentDate = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(new Date());
 
         String label = food.getLabel();
-        Double kcal = food.getEnergyKcal() * quantity;
+        double kcal = food.getEnergyKcal() * quantity;
+        int kcalFormatted = (int) Math.round(kcal);
         Double fat = food.getFat() * quantity;
+        int fatFormatted = (int) Math.round(fat);
         Double fiber = food.getFiber() * quantity;
+        int fiberFormatted = (int) Math.round(fiber);
         Double carbo = food.getCarbohydrates() * quantity;
+        int carboFormatted = (int) Math.round(carbo);
         Double protein = food.getCarbohydrates() * quantity;
+        int proteinFormatted = (int) Math.round(protein);
 
         Map<String, Object> foodItemData = new HashMap<>();
         foodItemData.put("label", label);
         foodItemData.put("quantity", quantity);
-        foodItemData.put("kcal", kcal);
-        foodItemData.put("fat", fat);
-        foodItemData.put("fiber", fiber);
-        foodItemData.put("carbo", carbo);
-        foodItemData.put("protein", protein);
+        foodItemData.put("kcal", kcalFormatted);
+        foodItemData.put("fat", fatFormatted);
+        foodItemData.put("fiber", fiberFormatted);
+        foodItemData.put("carbo", carboFormatted);
+        foodItemData.put("protein", proteinFormatted);
         foodItemData.put("food", food);
 
         CollectionReference collectionRef = db.collection("users").document(user.getUid()).collection("intake").document(currentDate).collection("food");
@@ -156,11 +161,11 @@ public class dbUtil {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Map<String, Object> intakeItem = new HashMap<>();
                         String label = (String) document.get("label");
-                        Double kcal = (Double) document.get("kcal");
-                        Double carbo = (Double) document.get("carbo");
-                        Double protein = (Double) document.get("protein");
-                        Double fiber = (Double) document.get("fiber");
-                        Double fat = (Double) document.get("fat");
+                        Long kcal = (Long) document.get("kcal");
+                        Long carbo = (Long) document.get("carbo");
+                        Long protein = (Long) document.get("protein");
+                        Long fiber = (Long) document.get("fiber");
+                        Long fat = (Long) document.get("fat");
                         Double quantity = (Double) document.get("quantity");
                         Map<String, Object> food = (Map<String, Object>) document.get("food");
 
