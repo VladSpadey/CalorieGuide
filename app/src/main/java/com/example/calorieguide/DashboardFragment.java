@@ -51,8 +51,10 @@ public class DashboardFragment extends Fragment {
 
     double weight, height, activityLevel,age;
     String formattedBMI;
-    private boolean isChartLoading = false;
-    AnyChartView anyChartView;
+    private boolean isBMIChartLoading = false;
+    private boolean isPieChartLoading = false;
+    AnyChartView bmi_anyChartView;
+    AnyChartView intake_anyChartView;
     double totalKcal = 0;
 
     @Override
@@ -108,8 +110,12 @@ public class DashboardFragment extends Fragment {
             setupBMRdesc(view);
             // Set Up BMI
             setupBMI(view);
+
             // Set Up Intake Display
-            setupIntakeChart(view);
+            if (!isPieChartLoading) {
+                isPieChartLoading = true;
+                setupIntakeChart(view);
+            }
             loadingBar.setVisibility(View.GONE);
         }
         return view;
@@ -119,57 +125,64 @@ public class DashboardFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         // Cancel loading if the fragment is destroyed while the chart is loading
-        if (isChartLoading) {
-            isChartLoading = false;
-            anyChartView = null;
+        if (isBMIChartLoading) {
+            isBMIChartLoading = false;
+            bmi_anyChartView = null;
+            intake_anyChartView = null;
+        }
+        if (isPieChartLoading) {
+            isPieChartLoading = false;
+            intake_anyChartView = null;
         }
     }
     // Food Intake Functions
     public void setupIntakeChart(View view){
-        AnyChartView anyChartView = view.findViewById(R.id.intake_pie_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
-        APIlib.getInstance().setActiveAnyChartView(anyChartView);
+        if (isPieChartLoading) {
+            intake_anyChartView = view.findViewById(R.id.intake_pie_view);
+            intake_anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
+            APIlib.getInstance().setActiveAnyChartView(intake_anyChartView);
 
-        Pie pie = AnyChart.pie();
+            Pie pie = AnyChart.pie();
 
-        pie.interactivity().selectionMode(SelectionMode.NONE);
+            pie.interactivity().selectionMode(SelectionMode.NONE);
 
-        List<DataEntry> data = new ArrayList<>();
-        dbUtil.getIntake(intake -> {
-            for (Map<String, Object> item : intake) {
-                String label = (String) item.get("label");
-                Long kcal = (Long) item.get("kcal");
-                totalKcal += kcal;
-            }
-            TextView intake_desc = view.findViewById(R.id.txt_eaten);
-            double available = bmr - totalKcal;
-            intake_desc.setText(String.format("Consumed: %s\nLeft: %s\nGoal: %d", totalKcal, available, bmr));
+            List<DataEntry> data = new ArrayList<>();
+            dbUtil.getIntake(intake -> {
+                for (Map<String, Object> item : intake) {
+                    String label = (String) item.get("label");
+                    Long kcal = (Long) item.get("kcal");
+                    totalKcal += kcal;
+                }
+                TextView intake_desc = view.findViewById(R.id.txt_eaten);
+                double available = bmr - totalKcal;
+                intake_desc.setText(String.format("Consumed: %s\nLeft: %s\nGoal: %d", totalKcal, available, bmr));
 
-            pie.palette(new String[]{"orange 0.75", "gray 0.5"});
-            pie.startAngle(270);
-            data.add(new ValueDataEntry("Consumed", totalKcal));
-            data.add(new ValueDataEntry("Available", available));
-            //data.add(new ValueDataEntry("Consumed", totalKcal));
+                pie.palette(new String[]{"orange 0.75", "gray 0.5"});
+                pie.startAngle(270);
+                data.add(new ValueDataEntry("Consumed", totalKcal));
+                data.add(new ValueDataEntry("Available", available));
+                //data.add(new ValueDataEntry("Consumed", totalKcal));
 
-            //pie.normal().fill("red");
-            pie.stroke("#111111");
-            pie.normal().outline().enabled(false);
+                //pie.normal().fill("red");
+                pie.stroke("#111111");
+                pie.normal().outline().enabled(false);
 
-            pie.data(data);
+                pie.data(data);
 
-            pie.labels().position("inside");
-            pie.legend().position("center-bottom")
-                    .itemsLayout(LegendLayout.HORIZONTAL)
-                    .align(Align.CENTER);
+                pie.labels().position("inside");
+                pie.legend().position("center-bottom")
+                        .itemsLayout(LegendLayout.HORIZONTAL)
+                        .align(Align.CENTER);
 
-            pie.background().enabled(true);
-            pie.background().fill("#111111");
-            pie.padding(0, 0, 25, 0);
+                pie.background().enabled(true);
+                pie.background().fill("#111111");
+                pie.padding(0, 0, 25, 0);
 
-            anyChartView.setChart(pie);
-        });
+                intake_anyChartView.setChart(pie);
+                isPieChartLoading = false;
+            });
+        }
     }
-
     // BMI Functions
     private void setupBMI(View view) {
 
@@ -184,18 +197,18 @@ public class DashboardFragment extends Fragment {
         bmiTextCategory.setText("Category: " + category);
 
         getToHealthyWeight(view, category, bmi);
-        if (!isChartLoading) {
+        if (!isBMIChartLoading) {
             // Start loading chart data
-            isChartLoading = true;
+            isBMIChartLoading = true;
             setupBMIChart(view);
         }
 
     }
     private void setupBMIChart(View view) {
-        if (isChartLoading){
-            anyChartView = view.findViewById(R.id.bmi_chart_view);
-            anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
-            APIlib.getInstance().setActiveAnyChartView(anyChartView);
+        if (isBMIChartLoading){
+            bmi_anyChartView = view.findViewById(R.id.bmi_chart_view);
+            bmi_anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
+            APIlib.getInstance().setActiveAnyChartView(bmi_anyChartView);
             LinearGauge linearGauge = AnyChart.linear();
 
             double marker = Double.parseDouble(formattedBMI);
@@ -242,7 +255,8 @@ public class DashboardFragment extends Fragment {
             linearGauge.background().enabled(true);
             linearGauge.background().fill("#111111");
 
-            anyChartView.setChart(linearGauge);
+            bmi_anyChartView.setChart(linearGauge);
+            isBMIChartLoading = false;
         }
         }
     private void getToHealthyWeight(View view, String category, double bmi) {
