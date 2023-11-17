@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Double activityLevel, age;
     double latestWeight, height;
     List<DataEntry> weightChartValues;
-    List<Map<String, Object>> intake;
+    List<Map<String, Object>> intakeReceived;
 
 
 
@@ -89,7 +89,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateIntakeValues() {
-        intake = dbUtil.getIntake();
+        dbUtil.getIntake(new dbUtil.IntakeCallback() {
+            @Override
+            public void onIntakeReceived(List<Map<String, Object>> intake) {
+                intakeReceived = intake;
+            }
+        });
     }
 
     public void updateWeightValues(){
