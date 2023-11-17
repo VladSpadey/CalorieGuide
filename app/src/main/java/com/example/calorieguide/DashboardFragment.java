@@ -2,22 +2,21 @@ package com.example.calorieguide;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.anychart.APIlib;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.SingleValueDataSet;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.chart.common.listener.Event;
-import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.LinearGauge;
 import com.anychart.charts.Pie;
 import com.anychart.enums.Align;
@@ -33,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
@@ -45,6 +45,8 @@ public class DashboardFragment extends Fragment {
     MainActivity mainActivity;
     String uID, email, sex;
     Long bmr =0L;
+    double bmi = 0;
+
     double weight, height, activityLevel,age;
     String formattedBMI;
     private boolean isChartLoading = false;
@@ -76,12 +78,13 @@ public class DashboardFragment extends Fragment {
                 user = mainActivity.user;
                 assert user != null;
 
-                // Set Up Intake Display
-                setupIntakeChart(view);
+
                 // Set Up BMR
                 setupBMRdesc(view);
                 // Set Up BMI
                 setupBMI(view);
+                // Set Up Intake Display
+                setupIntakeChart(view);
                 loadingBar.setVisibility(View.GONE);
             }, 3000);
         } else {
@@ -97,12 +100,13 @@ public class DashboardFragment extends Fragment {
             user = mainActivity.user;
             assert user != null;
 
-            // Set Up Intake Display
-            setupIntakeChart(view);
+
             // Set Up BMR
             setupBMRdesc(view);
             // Set Up BMI
             setupBMI(view);
+            // Set Up Intake Display
+            setupIntakeChart(view);
             loadingBar.setVisibility(View.GONE);
         }
         return view;
@@ -121,34 +125,29 @@ public class DashboardFragment extends Fragment {
     public void setupIntakeChart(View view){
         AnyChartView anyChartView = view.findViewById(R.id.intake_pie_view);
         anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
+        APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
         Pie pie = AnyChart.pie();
 
-        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
-            @Override
-            public void onClick(Event event) {
-                Toast.makeText(getContext(), event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
-            }
-        });
+        List<Map<String, Object>> intake = mainActivity.intakeReceived;
+        double totalKcal = 0.0;
+        for (Map<String, Object> item : intake) {
+            // Access and use individual values from 'item'
+            String label = (String) item.get("label");
+            Double kcal = (Double) item.get("kcal");
+            totalKcal += kcal;
+
+            // Perform actions with the retrieved data
+            // Update UI elements, calculate totals, etc.
+        }
 
         List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("Apples", 50));
-        data.add(new ValueDataEntry("Pears", 20));
-        data.add(new ValueDataEntry("Bananas", 5));
-        data.add(new ValueDataEntry("Grapes", 10));
-        data.add(new ValueDataEntry("Oranges", 5));
+        data.add(new ValueDataEntry("Available", bmr - totalKcal));
+        data.add(new ValueDataEntry("Consumed", totalKcal));
 
         pie.data(data);
 
-        pie.title("Fruits imported in 2015 (in kg)");
-
-        pie.labels().position("outside");
-
-        pie.legend().title().enabled(true);
-        pie.legend().title()
-                .text("Retail channels")
-                .padding(0d, 0d, 10d, 0d);
-
+        pie.labels().position("inside");
         pie.legend().position("center-bottom")
                 .itemsLayout(LegendLayout.HORIZONTAL)
                 .align(Align.CENTER);
@@ -184,6 +183,7 @@ public class DashboardFragment extends Fragment {
         if (isChartLoading){
             anyChartView = view.findViewById(R.id.bmi_chart_view);
             anyChartView.setProgressBar(view.findViewById(R.id.bmi_progress_bar));
+            APIlib.getInstance().setActiveAnyChartView(anyChartView);
             LinearGauge linearGauge = AnyChart.linear();
 
             double marker = Double.parseDouble(formattedBMI);
@@ -285,7 +285,8 @@ public class DashboardFragment extends Fragment {
     private double calculateBMI() {
         double heightInM = height / 100;
         double HxH = heightInM * heightInM;
-        return weight / HxH;
+        bmi = weight / HxH;
+        return bmi;
     }
     private void setupBMRdesc(View view) {
         TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
