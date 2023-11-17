@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.example.calorieguide.MainActivity;
 import com.example.calorieguide.R;
 
 import org.w3c.dom.Text;
