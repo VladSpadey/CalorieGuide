@@ -83,18 +83,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateValuesFromDB();
             updateWeightValues();
-            updateIntakeValues();
         }
-
-    }
-
-    private void updateIntakeValues() {
-        dbUtil.getIntake(new dbUtil.IntakeCallback() {
-            @Override
-            public void onIntakeReceived(List<Map<String, Object>> intake) {
-                intakeReceived = intake;
-            }
-        });
     }
 
     public void updateWeightValues(){
