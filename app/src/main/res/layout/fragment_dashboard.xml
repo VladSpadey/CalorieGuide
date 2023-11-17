@@ -50,18 +50,18 @@
 
             <com.anychart.AnyChartView
                 android:id="@+id/intake_pie_view"
-                android:layout_width="180dp"
-                android:layout_height="200dp"
+                android:layout_width="175dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="45dp"
                 android:layout_below="@+id/dashboard_txtCalorieIntake"/>
 
             <com.anychart.AnyChartView
                 android:id="@+id/details_pie"
-                android:layout_width="180dp"
-                android:layout_height="200dp"
+                android:layout_width="190dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="205dp"
@@ -80,12 +80,12 @@
                 android:id="@+id/txt_eaten"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/eaten"
-                android:textColor="@color/white"
-                android:textSize="20sp"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="10dp"
-                android:paddingBottom="15dp"/>
+                android:paddingBottom="15dp"
+                android:text="@string/eaten"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
         </RelativeLayout>
 

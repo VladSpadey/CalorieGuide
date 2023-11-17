@@ -129,25 +129,26 @@ public class DashboardFragment extends Fragment {
         APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
         Pie pie = AnyChart.pie();
-        pie.interactivity().selectionMode(SelectionMode.SINGLE_SELECT);
 
+        pie.interactivity().selectionMode(SelectionMode.NONE);
+
+        List<DataEntry> data = new ArrayList<>();
         List<Map<String, Object>> intake = mainActivity.intakeReceived;
         double totalKcal = 0.0;
         for (Map<String, Object> item : intake) {
-            // Access and use individual values from 'item'
             String label = (String) item.get("label");
             Double kcal = (Double) item.get("kcal");
+            data.add(new ValueDataEntry(label, kcal));
             totalKcal += kcal;
-
-            // Perform actions with the retrieved data
-            // Update UI elements, calculate totals, etc.
         }
 
-        List<DataEntry> data = new ArrayList<>();
+        pie.palette(new String[]{"orange 0.75", "orange 0.5", "gray"});
         data.add(new ValueDataEntry("Available", bmr - totalKcal));
-        data.add(new ValueDataEntry("Consumed", totalKcal));
+        //data.add(new ValueDataEntry("Consumed", totalKcal));
 
-
+        //pie.normal().fill("red");
+        pie.stroke("#111111");
+        pie.normal().outline().enabled(false);
 
         pie.data(data);
 
@@ -158,6 +159,7 @@ public class DashboardFragment extends Fragment {
 
         pie.background().enabled(true);
         pie.background().fill("#111111");
+        pie.padding(0, 0, 25, 0);
 
         anyChartView.setChart(pie);
     }
