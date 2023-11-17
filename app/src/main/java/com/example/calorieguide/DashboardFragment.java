@@ -24,6 +24,7 @@ import com.anychart.enums.Layout;
 import com.anychart.enums.LegendLayout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
+import com.anychart.enums.SelectionMode;
 import com.anychart.scales.OrdinalColor;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -128,6 +129,7 @@ public class DashboardFragment extends Fragment {
         APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
         Pie pie = AnyChart.pie();
+        pie.interactivity().selectionMode(SelectionMode.SINGLE_SELECT);
 
         List<Map<String, Object>> intake = mainActivity.intakeReceived;
         double totalKcal = 0.0;
@@ -144,6 +146,8 @@ public class DashboardFragment extends Fragment {
         List<DataEntry> data = new ArrayList<>();
         data.add(new ValueDataEntry("Available", bmr - totalKcal));
         data.add(new ValueDataEntry("Consumed", totalKcal));
+
+
 
         pie.data(data);
 

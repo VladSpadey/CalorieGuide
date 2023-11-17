@@ -78,6 +78,10 @@
     <string name="quantity_">Quantity:</string>
     <string name="_1">1</string>
     <string name="per">Per</string>
+    <string name="calories_eaten">Calories Eaten:</string>
+    <string name="limit">Limit:</string>
+    <string name="available">Available</string>
+    <string name="eaten">Eaten:</string>
 
 
 </resources>
