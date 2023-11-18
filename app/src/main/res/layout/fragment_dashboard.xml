@@ -58,21 +58,11 @@
                 android:layout_marginBottom="25dp"
                 android:layout_below="@+id/dashboard_txtCalorieIntake"/>
 
-            <com.anychart.AnyChartView
-                android:id="@+id/details_pie"
-                android:layout_width="190dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="205dp"
-                android:layout_marginBottom="25dp"
-                android:layout_below="@+id/dashboard_txtCalorieIntake"/>
-
             <ProgressBar
                 android:id="@+id/intake_progress_bar"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_marginStart="65dp"
+                android:layout_marginStart="55dp"
                 android:layout_marginTop="100dp"
                 android:visibility="gone" />
 
@@ -80,7 +70,7 @@
                 android:id="@+id/txt_eaten"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/details_pie"
+                android:layout_below="@id/intake_pie_view"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"

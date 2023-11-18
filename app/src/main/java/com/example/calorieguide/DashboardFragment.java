@@ -2,6 +2,7 @@ package com.example.calorieguide;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,7 @@ public class DashboardFragment extends Fragment {
     private boolean isPieChartLoading = false;
     AnyChartView bmi_anyChartView;
     AnyChartView intake_anyChartView;
+    AnyChartView foodDetails_anyChartView;
     double totalKcal = 0;
 
     @Override
@@ -94,7 +96,7 @@ public class DashboardFragment extends Fragment {
                     setupIntakeChart(view);
                 }
                 loadingBar.setVisibility(View.GONE);
-            }, 3000);
+            }, 2000);
         } else {
             user = mainActivity.user;
             uID = (String) mainActivity.userData.get("uid");
@@ -138,11 +140,12 @@ public class DashboardFragment extends Fragment {
         }
     }
     // Food Intake Functions
-    public void setupIntakeChart(View view){
+    public void setupIntakeChart(View view) {
         if (isPieChartLoading) {
             intake_anyChartView = view.findViewById(R.id.intake_pie_view);
             intake_anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
-            if (intake_anyChartView != null && isPieChartLoading) {
+
+            if (intake_anyChartView != null && isPieChartLoading & intake_anyChartView.getWindowToken() != null) {
                 APIlib.getInstance().setActiveAnyChartView(intake_anyChartView);
 
                 Pie pie = AnyChart.pie();
@@ -150,7 +153,8 @@ public class DashboardFragment extends Fragment {
                 pie.interactivity().selectionMode(SelectionMode.NONE);
 
                 List<DataEntry> data = new ArrayList<>();
-                if (intake_anyChartView != null && isPieChartLoading) {
+
+                if (intake_anyChartView != null && isPieChartLoading && intake_anyChartView.getWindowToken() != null) {
                     dbUtil.getIntake(intake -> {
                         if (intake_anyChartView != null && isPieChartLoading) {
                             for (Map<String, Object> item : intake) {
@@ -159,32 +163,36 @@ public class DashboardFragment extends Fragment {
                                 totalKcal += kcal;
                             }
                         }
+
                         TextView intake_desc = view.findViewById(R.id.txt_eaten);
                         double available = bmr - totalKcal;
-                        intake_desc.setText(String.format("Consumed: %s\nLeft: %s\nGoal: %d", totalKcal, available, bmr));
+                        intake_desc.setText(Html.fromHtml(
+                                "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b><br>" +
+                                        "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b><br>" +
+                                        "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b>"
+                        ));
 
-                        if (intake_anyChartView != null && isPieChartLoading) {
-                            pie.palette(new String[]{"#fb8500 0.85", "#495057"});
+                        if (intake_anyChartView != null && isPieChartLoading && intake_anyChartView.getWindowToken() != null) {
+                            if (pie != null) {
+                                pie.palette(new String[]{"#fb8500 0.85", "#495057"});
+                                pie.startAngle(0);
+                                data.add(new ValueDataEntry("Consumed", totalKcal));
+                                data.add(new ValueDataEntry("Left", available));
+                                pie.stroke("#111111");
+                                pie.normal().outline().enabled(false);
+                                pie.data(data);
+                                pie.labels().position("inside");
+                                pie.background().enabled(true);
+                                pie.background().fill("#111111");
+                                pie.padding(0, 0, 25, 0);
+                                pie.tooltip().enabled(false);
 
-                            pie.startAngle(0);
-                            data.add(new ValueDataEntry("Consumed", totalKcal));
-                            data.add(new ValueDataEntry("Left", available));
-                            //data.add(new ValueDataEntry("Consumed", totalKcal));
+                                if (intake_anyChartView.getWindowToken() != null) {
+                                    intake_anyChartView.setChart(pie);
+                                }
 
-                            //pie.normal().fill("red");
-                            pie.stroke("#111111");
-                            pie.normal().outline().enabled(false);
-
-                            pie.data(data);
-
-                            pie.labels().position("inside");
-
-                            pie.background().enabled(true);
-                            pie.background().fill("#111111");
-                            pie.padding(0, 0, 25, 0);
-
-                            intake_anyChartView.setChart(pie);
-                            isPieChartLoading = false;
+                                isPieChartLoading = false;
+                            }
                         }
                     });
                 }
