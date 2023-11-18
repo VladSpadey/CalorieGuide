@@ -149,7 +149,7 @@ public class DashboardFragment extends Fragment {
                 APIlib.getInstance().setActiveAnyChartView(intake_anyChartView);
                 List<DataEntry> data = new ArrayList<>();
                 Log.d("pie", "3");
-                dbUtil.getIntake(intake -> {
+                List<Map<String, Object>> intake = mainActivity.intakeReceived;
                     for (Map<String, Object> item : intake) {
                         String label = (String) item.get("label");
                         Long kcal = (Long) item.get("kcal");
@@ -181,13 +181,12 @@ public class DashboardFragment extends Fragment {
                         pie.padding(0, 0, 25, 0);
                         pie.tooltip().enabled(false);
 
-                        if (intake_anyChartView != null && isPieChartLoading && intake_anyChartView.getWindowToken() != null) {
+                        if (intake_anyChartView != null && isPieChartLoading) {
                             intake_anyChartView.setChart(pie);
                             Log.d("pie", "6");
                         }
                         Log.d("pie", "7");
                     }
-                });
             }
         }
     }

@@ -83,7 +83,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateValuesFromDB();
             updateWeightValues();
+            updateIntake();
         }
+    }
+
+    private void updateIntake() {
+        dbUtil.getIntake(intake -> {
+            intakeReceived = intake;
+        });
     }
 
     public void updateWeightValues(){
