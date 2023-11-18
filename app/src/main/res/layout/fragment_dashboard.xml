@@ -55,16 +55,6 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="45dp"
-                android:layout_below="@+id/dashboard_txtCalorieIntake"/>
-
-            <com.anychart.AnyChartView
-                android:id="@+id/details_pie"
-                android:layout_width="190dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="205dp"
                 android:layout_marginBottom="25dp"
                 android:layout_below="@+id/dashboard_txtCalorieIntake"/>
 
@@ -72,18 +62,20 @@
                 android:id="@+id/intake_progress_bar"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_marginStart="65dp"
+                android:layout_marginStart="55dp"
                 android:layout_marginTop="100dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txt_eaten"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="10dp"
+                android:layout_below="@id/intake_pie_view"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:paddingBottom="15dp"
-                android:text="@string/eaten"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
@@ -199,11 +191,13 @@
                 android:textSize="17sp" />
 
         </RelativeLayout>
+
         <ProgressBar
             android:id="@+id/loadingBar"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_centerInParent="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="250dp"
             android:background="@drawable/round_corners_dialog"
             android:padding="5dp"
             android:visibility="visible" />

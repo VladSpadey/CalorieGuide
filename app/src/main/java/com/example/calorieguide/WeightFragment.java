@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -66,9 +68,43 @@ public class WeightFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_weight, container, false);
 
-        // User Data
+        ProgressBar loadingBar = view.findViewById(R.id.loadingBar_weight);
+        loadingBar.setVisibility(View.VISIBLE);
+
         mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
+
+        if (mainActivity.userData == null || mainActivity.userData.isEmpty()) {
+            // User data is not available yet, schedule a delayed callback
+            new Handler().postDelayed(() -> {
+                runWeightFragment();
+                addDataListener();
+                if (chart == null || chart.isEmpty()){
+                    chartView = view.findViewById(R.id.weight_chart_view);
+                    chartView.setVisibility(View.GONE);
+                } else {
+                    setupChart(chart);
+                    chartView.setVisibility(View.VISIBLE);
+                }
+                loadingBar.setVisibility(View.GONE);
+            }, 2000);
+        } else {
+            runWeightFragment();
+            addDataListener();
+            if (chart == null || chart.isEmpty()){
+                chartView = view.findViewById(R.id.weight_chart_view);
+                chartView.setVisibility(View.GONE);
+            } else {
+                setupChart(chart);
+                chartView.setVisibility(View.VISIBLE);
+            }
+            loadingBar.setVisibility(View.GONE);
+        }
+        return view;
+    }
+
+    private void runWeightFragment() {
+        // User Data
         user = mainActivity.user;
         uID = (String) mainActivity.userData.get("uid");
         email = (String) mainActivity.userData.get("email");
@@ -78,29 +114,15 @@ public class WeightFragment extends Fragment {
         height = (double) mainActivity.userData.get("height");
         activityLevel = mainActivity.activityLevel;
         sex = mainActivity.sex;
-
         overlay = view.findViewById(R.id.overlay);
-
         if (!isChartLoading) {
             isChartLoading = true;
         }
-
         // Chart
         chart = mainActivity.weightChartValues;
-        Log.d("UserData_Chart", "chart:" + chart);
-        if (chart.isEmpty()){
-            chartView = view.findViewById(R.id.weight_chart_view);
-            chartView.setVisibility(View.GONE);
-        } else {
-            setupChart(chart);
-            chartView.setVisibility(View.VISIBLE);
-        }
 
         // Add Weight
         addData = view.findViewById(R.id.btn_addWeight);
-        addDataListener();
-
-        return view;
     }
 
     @Override

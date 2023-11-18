@@ -65,6 +65,16 @@
 
     </RelativeLayout>
 
+    <!-- Loading Bar -->
+    <ProgressBar
+        android:id="@+id/loadingBar_weight"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/round_corners_dialog"
+        android:padding="5dp"
+        android:visibility="visible" />
+
     <!-- Black Overlay -->
     <View
         android:id="@+id/overlay"
