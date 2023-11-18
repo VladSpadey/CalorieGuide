@@ -96,6 +96,11 @@ public class DashboardFragment extends Fragment {
                 if (!isPieChartLoading)
                     isPieChartLoading = true;
                 setupIntakeChart(view);
+
+                if (!isDetailsPieChartLoading)
+                    isDetailsPieChartLoading = true;
+                setupFoodDetailsChart(view);
+
                 loadingBar.setVisibility(View.GONE);
             }, 2000);
         } else {
@@ -165,7 +170,6 @@ public class DashboardFragment extends Fragment {
                 List<DataEntry> data = new ArrayList<>();
                 List<Map<String, Object>> intake = mainActivity.intakeReceived;
                     for (Map<String, Object> item : intake) {
-                        String label = (String) item.get("label");
                         Long kcal = (Long) item.get("kcal");
                         totalKcal += kcal;
                     }
@@ -178,7 +182,7 @@ public class DashboardFragment extends Fragment {
                     if(intake_anyChartView != null){
                         pie = AnyChart.pie();
                         pie.interactivity().selectionMode(SelectionMode.NONE);
-                        pie.startAngle(335);
+                        pie.startAngle(0);
                         if(overTheGoal){
                             pie.palette(new String[]{"#fb8500 0.8", "#780000"});
                             data.add(new ValueDataEntry("Consumed", totalKcal));
@@ -205,7 +209,7 @@ public class DashboardFragment extends Fragment {
 
                         pie.background().enabled(true);
                         pie.background().fill("#111111");
-                        pie.padding(0, 0, 25, 0);
+                        pie.padding(10, 0, 35, 0);
                         pie.tooltip().enabled(false);
 
                         if (intake_anyChartView != null && isPieChartLoading) {
@@ -228,6 +232,7 @@ public class DashboardFragment extends Fragment {
                 Long totalCarbs = 0L;
                 Long totalFats = 0L;
                 Long totalFiber = 0L;
+                List<DataEntry> data = new ArrayList<>();
                 List<Map<String, Object>> intake = mainActivity.intakeReceived;
                 for (Map<String, Object> item : intake) {
                     Long protein = (Long) item.get("protein");
@@ -243,28 +248,31 @@ public class DashboardFragment extends Fragment {
                 if(food_details_anyChartView != null){
                     detailsPie = AnyChart.pie();
                     detailsPie.interactivity().selectionMode(SelectionMode.NONE);
-                    detailsPie.startAngle(335);
-                    detailsPie.palette(new String[]{"#fb8500 0.85", "#495057"});
-                    List<DataEntry> data = new ArrayList<>();
+                    detailsPie.startAngle(0);
+                    detailsPie.palette(new String[]{"#fb8500", "#023047", "#ffb703", "#219ebc"});
                     data.add(new ValueDataEntry("Protein", totalProtein));
-                    data.add(new ValueDataEntry("Carbohydrates", totalCarbs));
+                    data.add(new ValueDataEntry("Carbs", totalCarbs));
                     data.add(new ValueDataEntry("Fats", totalFats));
                     data.add(new ValueDataEntry("Fiber", totalFiber));
-                    /*
-                    intake_desc.setText(Html.fromHtml(
-                            "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
-                                    "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b> cal<br>" +
-                                    "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b> cal"
-                    )); */
                     detailsPie.stroke("#111111");
                     detailsPie.normal().outline().enabled(false);
                     detailsPie.data(data);
                     detailsPie.labels().enabled(false);
-
                     detailsPie.background().enabled(true);
                     detailsPie.background().fill("#111111");
-                    detailsPie.padding(0, 0, 25, 0);
+                    detailsPie.padding(10, 0, 20, 0);
                     detailsPie.tooltip().enabled(false);
+                    detailsPie.legend()
+                            .itemsLayout("vertical")
+                            .positionMode("outside")
+                            .align(Align.BOTTOM);
+                    detailsPie.legend().useHtml(true);
+                    String itemsFormat = "function() {" +
+                            "var percent = this.getStat('percentValue');" +
+                            "percent = percent.toFixed(0);" +
+                            "return this.x + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
+
+                    detailsPie.legend().itemsFormat(itemsFormat);
 
                     if (food_details_anyChartView != null && isDetailsPieChartLoading) {
                         food_details_anyChartView.setChart(detailsPie);

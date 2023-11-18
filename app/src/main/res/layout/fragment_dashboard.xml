@@ -49,33 +49,45 @@
                 android:textSize="19sp"/>
 
 
-            <LinearLayout
-                android:id="@+id/pie_charts_linear_layout"
+            <RelativeLayout
+                android:id="@+id/pie_charts_relative_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_below="@+id/dashboard_txtCalorieIntake"
-                >
+                android:layout_below="@+id/dashboard_txtCalorieIntake">
+
                 <com.anychart.AnyChartView
                     android:id="@+id/intake_pie_view"
-                    android:layout_width="0dp"
+                    android:layout_width="165dp"
                     android:layout_height="220dp"
                     android:layout_marginTop="15dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="25dp"
-                    android:layout_marginEnd="5dp"/>
+                    android:layout_marginEnd="5dp"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/txt_eaten"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingBottom="15dp"
+                    android:text=""
+                    android:layout_below="@+id/intake_pie_view"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
                 <com.anychart.AnyChartView
                     android:id="@+id/details_pie_view"
-                    android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_width="165dp"
+                    android:layout_height="300dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="25dp"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                    android:layout_toEndOf="@+id/intake_pie_view" />
+
+            </RelativeLayout>
 
             <ProgressBar
                 android:id="@+id/intake_progress_bar"
@@ -92,20 +104,6 @@
                 android:layout_marginStart="240dp"
                 android:layout_marginTop="100dp"
                 android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txt_eaten"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/pie_charts_linear_layout"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingBottom="15dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
         </RelativeLayout>
 
         <!-- BMI Layout -->
