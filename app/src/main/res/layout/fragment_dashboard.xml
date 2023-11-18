@@ -48,15 +48,34 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="19sp"/>
 
-            <com.anychart.AnyChartView
-                android:id="@+id/intake_pie_view"
-                android:layout_width="175dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="25dp"
-                android:layout_below="@+id/dashboard_txtCalorieIntake"/>
+
+            <LinearLayout
+                android:id="@+id/pie_charts_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/dashboard_txtCalorieIntake"
+                >
+                <com.anychart.AnyChartView
+                    android:id="@+id/intake_pie_view"
+                    android:layout_width="0dp"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginEnd="5dp"/>
+
+                <com.anychart.AnyChartView
+                    android:id="@+id/details_pie_view"
+                    android:layout_width="0dp"
+                    android:layout_height="220dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/intake_progress_bar"
@@ -66,11 +85,19 @@
                 android:layout_marginTop="100dp"
                 android:visibility="gone" />
 
+            <ProgressBar
+                android:id="@+id/details_progress_bar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="240dp"
+                android:layout_marginTop="100dp"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/txt_eaten"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/intake_pie_view"
+                android:layout_below="@+id/pie_charts_linear_layout"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
