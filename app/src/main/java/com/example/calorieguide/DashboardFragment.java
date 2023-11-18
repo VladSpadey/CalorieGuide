@@ -56,8 +56,8 @@ public class DashboardFragment extends Fragment {
     private boolean isPieChartLoading = false;
     AnyChartView bmi_anyChartView;
     AnyChartView intake_anyChartView;
-    AnyChartView foodDetails_anyChartView;
     double totalKcal = 0;
+    Pie pie;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,16 +85,14 @@ public class DashboardFragment extends Fragment {
                 user = mainActivity.user;
                 assert user != null;
 
-
                 // Set Up BMR
                 setupBMRdesc(view);
                 // Set Up BMI
                 setupBMI(view);
                 // Set Up Intake Display
-                if (!isPieChartLoading) {
+                if (!isPieChartLoading)
                     isPieChartLoading = true;
-                    setupIntakeChart(view);
-                }
+                setupIntakeChart(view);
                 loadingBar.setVisibility(View.GONE);
             }, 2000);
         } else {
@@ -107,20 +105,18 @@ public class DashboardFragment extends Fragment {
             height = (double) mainActivity.userData.get("height");
             activityLevel = mainActivity.activityLevel;
             sex = mainActivity.sex;
+
             user = mainActivity.user;
             assert user != null;
-
 
             // Set Up BMR
             setupBMRdesc(view);
             // Set Up BMI
             setupBMI(view);
-
             // Set Up Intake Display
-            if (!isPieChartLoading) {
+            if (!isPieChartLoading)
                 isPieChartLoading = true;
-                setupIntakeChart(view);
-            }
+            setupIntakeChart(view);
             loadingBar.setVisibility(View.GONE);
         }
         return view;
@@ -137,71 +133,67 @@ public class DashboardFragment extends Fragment {
         if (isPieChartLoading) {
             isPieChartLoading = false;
             intake_anyChartView = null;
+            pie = null;
         }
     }
     // Food Intake Functions
     public void setupIntakeChart(View view) {
-        if (isPieChartLoading) {
-            intake_anyChartView = view.findViewById(R.id.intake_pie_view);
-            intake_anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
-
-            if (intake_anyChartView != null && isPieChartLoading & intake_anyChartView.getWindowToken() != null) {
+        if(isPieChartLoading) {
+            Log.d("pie", "1");
+            if (intake_anyChartView != null)
+                intake_anyChartView.invalidate();
+            if (isPieChartLoading) {
+                intake_anyChartView = view.findViewById(R.id.intake_pie_view);
+                intake_anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
+                Log.d("pie", "2");
                 APIlib.getInstance().setActiveAnyChartView(intake_anyChartView);
-
-                Pie pie = AnyChart.pie();
-
-                pie.interactivity().selectionMode(SelectionMode.NONE);
-
                 List<DataEntry> data = new ArrayList<>();
+                Log.d("pie", "3");
+                dbUtil.getIntake(intake -> {
+                    for (Map<String, Object> item : intake) {
+                        String label = (String) item.get("label");
+                        Long kcal = (Long) item.get("kcal");
+                        totalKcal += kcal;
+                    }
+                    Log.d("pie", "4");
+                    TextView intake_desc = view.findViewById(R.id.txt_eaten);
+                    double available = bmr - totalKcal;
+                    intake_desc.setText(Html.fromHtml(
+                            "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b><br>" +
+                                    "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b><br>" +
+                                    "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b>"
+                    ));
+                    Log.d("pie", "5");
 
-                if (intake_anyChartView != null && isPieChartLoading && intake_anyChartView.getWindowToken() != null) {
-                    dbUtil.getIntake(intake -> {
-                        if (intake_anyChartView != null && isPieChartLoading) {
-                            for (Map<String, Object> item : intake) {
-                                String label = (String) item.get("label");
-                                Long kcal = (Long) item.get("kcal");
-                                totalKcal += kcal;
-                            }
-                        }
-
-                        TextView intake_desc = view.findViewById(R.id.txt_eaten);
-                        double available = bmr - totalKcal;
-                        intake_desc.setText(Html.fromHtml(
-                                "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b><br>" +
-                                        "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b><br>" +
-                                        "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b>"
-                        ));
+                    if(intake_anyChartView != null){
+                        pie = AnyChart.pie();
+                        pie.interactivity().selectionMode(SelectionMode.NONE);
+                        pie.palette(new String[]{"#fb8500 0.85", "#495057"});
+                        pie.startAngle(0);
+                        data.add(new ValueDataEntry("Consumed", totalKcal));
+                        data.add(new ValueDataEntry("Left", available));
+                        pie.stroke("#111111");
+                        pie.normal().outline().enabled(false);
+                        pie.data(data);
+                        pie.labels().position("inside");
+                        pie.background().enabled(true);
+                        pie.background().fill("#111111");
+                        pie.padding(0, 0, 25, 0);
+                        pie.tooltip().enabled(false);
 
                         if (intake_anyChartView != null && isPieChartLoading && intake_anyChartView.getWindowToken() != null) {
-                            if (pie != null) {
-                                pie.palette(new String[]{"#fb8500 0.85", "#495057"});
-                                pie.startAngle(0);
-                                data.add(new ValueDataEntry("Consumed", totalKcal));
-                                data.add(new ValueDataEntry("Left", available));
-                                pie.stroke("#111111");
-                                pie.normal().outline().enabled(false);
-                                pie.data(data);
-                                pie.labels().position("inside");
-                                pie.background().enabled(true);
-                                pie.background().fill("#111111");
-                                pie.padding(0, 0, 25, 0);
-                                pie.tooltip().enabled(false);
-
-                                if (intake_anyChartView.getWindowToken() != null) {
-                                    intake_anyChartView.setChart(pie);
-                                }
-
-                                isPieChartLoading = false;
-                            }
+                            intake_anyChartView.setChart(pie);
+                            Log.d("pie", "6");
                         }
-                    });
-                }
+                        Log.d("pie", "7");
+                    }
+                });
             }
         }
     }
+
     // BMI Functions
     private void setupBMI(View view) {
-
         double bmi = calculateBMI();
         TextView bmiText = view.findViewById(R.id.dashboard_txtBMI);
         TextView bmiTextCategory = view.findViewById(R.id.dashboard_txtBMICategory);
@@ -272,7 +264,6 @@ public class DashboardFragment extends Fragment {
             linearGauge.background().fill("#111111");
 
             bmi_anyChartView.setChart(linearGauge);
-            isBMIChartLoading = false;
         }
         }
     private void getToHealthyWeight(View view, String category, double bmi) {
@@ -322,7 +313,6 @@ public class DashboardFragment extends Fragment {
         }
         return category;
     }
-
     // BMR Functions
     private double calculateBMI() {
         double heightInM = height / 100;

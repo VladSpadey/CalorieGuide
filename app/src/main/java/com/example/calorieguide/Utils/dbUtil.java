@@ -1,8 +1,4 @@
 package com.example.calorieguide.Utils;
-
-import static java.lang.Math.round;
-
-import android.nfc.Tag;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
