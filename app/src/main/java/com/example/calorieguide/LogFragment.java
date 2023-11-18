@@ -162,7 +162,9 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
                 }
                 hideLoadingBar();
                 RecyclerView recyclerView = view.findViewById(R.id.food_list_view);
-                FoodAdapter adapter = new FoodAdapter(foodList, requireContext(), getLayoutInflater(), overlay);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                assert mainActivity != null;
+                FoodAdapter adapter = new FoodAdapter(foodList, requireContext(), getLayoutInflater(), overlay, mainActivity);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             } catch (JSONException e) {

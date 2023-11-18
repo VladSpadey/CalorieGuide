@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateIntake() {
+    public void updateIntake() {
         dbUtil.getIntake(intake -> {
             intakeReceived = intake;
         });

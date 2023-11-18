@@ -14,30 +14,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.example.calorieguide.MainActivity;
 import com.example.calorieguide.R;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private final List<foodModel> foodList;
     private final Context context;
     private final LayoutInflater inflater;
     private final View overlay;
+    private final MainActivity mainActivity;
 
-    public FoodAdapter(List<foodModel> foodList, Context context, LayoutInflater inflater, View overlay) {
+    public FoodAdapter(List<foodModel> foodList, Context context, LayoutInflater inflater, View overlay, MainActivity mainActivity) {
         this.foodList = foodList;
         this.context = context;
         this.inflater = inflater;
         this.overlay = overlay;
+        this.mainActivity = mainActivity;
     }
 
     @NonNull
@@ -87,6 +81,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
                 double q = Double.parseDouble(quantityString);
                 dbUtil.addIntake(food, q);
                 Toast.makeText(context, "Item added successfully", Toast.LENGTH_SHORT).show();
+                mainActivity.updateIntake();
                 alertDialog.dismiss();
             } else {
                 Toast.makeText(context, "Quantity needs to have a value.", Toast.LENGTH_SHORT).show();
