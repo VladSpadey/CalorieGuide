@@ -138,44 +138,55 @@ public class DashboardFragment extends Fragment {
     }
     // Food Intake Functions
     public void setupIntakeChart(View view) {
+        boolean overTheGoal = false;
         if(isPieChartLoading) {
-            Log.d("pie", "1");
             if (intake_anyChartView != null)
                 intake_anyChartView.invalidate();
             if (isPieChartLoading) {
                 intake_anyChartView = view.findViewById(R.id.intake_pie_view);
                 intake_anyChartView.setProgressBar(view.findViewById(R.id.intake_progress_bar));
-                Log.d("pie", "2");
                 APIlib.getInstance().setActiveAnyChartView(intake_anyChartView);
                 List<DataEntry> data = new ArrayList<>();
-                Log.d("pie", "3");
                 List<Map<String, Object>> intake = mainActivity.intakeReceived;
                     for (Map<String, Object> item : intake) {
                         String label = (String) item.get("label");
                         Long kcal = (Long) item.get("kcal");
                         totalKcal += kcal;
                     }
-                    Log.d("pie", "4");
-                    TextView intake_desc = view.findViewById(R.id.txt_eaten);
-                    double available = bmr - totalKcal;
-                    intake_desc.setText(Html.fromHtml(
-                            "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b><br>" +
-                                    "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b><br>" +
-                                    "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b>"
-                    ));
-                    Log.d("pie", "5");
-
+                TextView intake_desc = view.findViewById(R.id.txt_eaten);
+                double available = bmr - totalKcal;
+                if(available < 0){
+                    overTheGoal = true;
+                    available *= -1;
+                }
                     if(intake_anyChartView != null){
                         pie = AnyChart.pie();
                         pie.interactivity().selectionMode(SelectionMode.NONE);
-                        pie.palette(new String[]{"#fb8500 0.85", "#495057"});
                         pie.startAngle(0);
-                        data.add(new ValueDataEntry("Consumed", totalKcal));
-                        data.add(new ValueDataEntry("Left", available));
+                        if(overTheGoal){
+                            pie.palette(new String[]{"#fb8500 0.85", "#780000"});
+                            data.add(new ValueDataEntry("Consumed", totalKcal));
+                            data.add(new ValueDataEntry("Over", available));
+                            intake_desc.setText(Html.fromHtml(
+                                    "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
+                                            "<font color='#adb5bd' size='16'>Over by: </font><b>" + available + "</b> cal<br>" +
+                                            "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b> cal"
+                            ));
+                        } else {
+                            pie.palette(new String[]{"#fb8500 0.85", "#495057"});
+                            data.add(new ValueDataEntry("Consumed", totalKcal));
+                            data.add(new ValueDataEntry("Left", available));
+                            intake_desc.setText(Html.fromHtml(
+                                    "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b><br> cal" +
+                                            "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b><br> cal" +
+                                            "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b> cal"
+                            ));
+                        }
                         pie.stroke("#111111");
                         pie.normal().outline().enabled(false);
                         pie.data(data);
-                        pie.labels().position("inside");
+                        pie.labels().enabled(false);
+
                         pie.background().enabled(true);
                         pie.background().fill("#111111");
                         pie.padding(0, 0, 25, 0);
@@ -183,9 +194,7 @@ public class DashboardFragment extends Fragment {
 
                         if (intake_anyChartView != null && isPieChartLoading) {
                             intake_anyChartView.setChart(pie);
-                            Log.d("pie", "6");
                         }
-                        Log.d("pie", "7");
                     }
             }
         }
