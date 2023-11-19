@@ -188,18 +188,18 @@ public class DashboardFragment extends Fragment {
                             data.add(new ValueDataEntry("Consumed", totalKcal));
                             data.add(new ValueDataEntry("Over", available));
                             intake_desc.setText(Html.fromHtml(
-                                    "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
-                                            "<font color='#adb5bd' size='16'>Over by: </font><b>" + available + "</b> cal<br>" +
-                                            "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b> cal"
+                                    "<font color='#adb5bd'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
+                                            "<font color='#adb5bd'>Over by: </font><b>" + available + "</b> cal<br>" +
+                                            "<font color='#adb5bd'>Goal: </font><b>" + bmr + "</b> cal"
                             ));
                         } else {
                             pie.palette(new String[]{"#fb8500 0.85", "#495057 0.85"});
                             data.add(new ValueDataEntry("Consumed", totalKcal));
                             data.add(new ValueDataEntry("Left", available));
                             intake_desc.setText(Html.fromHtml(
-                                    "<font color='#adb5bd' size='16'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
-                                            "<font color='#adb5bd' size='16'>Left: </font><b>" + available + "</b> cal<br>" +
-                                            "<font color='#adb5bd' size='16'>Goal: </font><b>" + bmr + "</b> cal"
+                                    "<font color='#adb5bd'>Consumed: </font><b>" + totalKcal + "</b> cal<br>" +
+                                            "<font color='#adb5bd'>Left: </font><b>" + available + "</b> cal<br>" +
+                                            "<font color='#adb5bd''>Goal: </font><b>" + bmr + "</b> cal"
                             ));
                         }
                         pie.stroke("#111111");
@@ -209,7 +209,7 @@ public class DashboardFragment extends Fragment {
 
                         pie.background().enabled(true);
                         pie.background().fill("#111111");
-                        pie.padding(10, 0, 35, 0);
+                        pie.padding(10, 0, 25, 0);
                         pie.tooltip().enabled(false);
 
                         if (intake_anyChartView != null && isPieChartLoading) {
@@ -265,12 +265,15 @@ public class DashboardFragment extends Fragment {
                     detailsPie.legend()
                             .itemsLayout("vertical")
                             .positionMode("outside")
-                            .align(Align.BOTTOM);
+                            .padding(10, 40, 13, 0)
+                            .align("middle")
+                            .align(Align.BOTTOM)
+                            .itemsSpacing(5);
                     detailsPie.legend().useHtml(true);
                     String itemsFormat = "function() {" +
                             "var percent = this.getStat('percentValue');" +
                             "percent = percent.toFixed(0);" +
-                            "return this.x + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
+                            "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
 
                     detailsPie.legend().itemsFormat(itemsFormat);
 
