@@ -145,7 +145,6 @@ public class dbUtil {
     public interface IntakeCallback {
         void onIntakeReceived(List<Map<String, Object>> intake);
     }
-
     public static void getIntake(IntakeCallback callback) {
         List<Map<String, Object>> intake = new ArrayList<>();
         auth = FirebaseAuth.getInstance();
@@ -182,7 +181,6 @@ public class dbUtil {
                     // Handle the error
                 });
     }
-
     public static List<DataEntry> getWeightChartValues() {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();

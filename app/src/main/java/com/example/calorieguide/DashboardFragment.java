@@ -111,6 +111,7 @@ public class DashboardFragment extends Fragment {
 
             user = mainActivity.user;
             assert user != null;
+
             // Set Up BMI
             setupBMI(view);
             // Set Up Intake Display
