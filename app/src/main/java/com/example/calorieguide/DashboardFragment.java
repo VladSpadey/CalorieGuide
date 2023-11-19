@@ -3,7 +3,6 @@ package com.example.calorieguide;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +21,10 @@ import com.anychart.charts.LinearGauge;
 import com.anychart.charts.Pie;
 import com.anychart.enums.Align;
 import com.anychart.enums.Layout;
-import com.anychart.enums.LegendLayout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.Orientation;
 import com.anychart.enums.SelectionMode;
 import com.anychart.scales.OrdinalColor;
-import com.example.calorieguide.Utils.dbUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -88,8 +85,6 @@ public class DashboardFragment extends Fragment {
                 user = mainActivity.user;
                 assert user != null;
 
-                // Set Up BMR
-                setupBMRdesc(view);
                 // Set Up BMI
                 setupBMI(view);
                 // Set Up Intake Display
@@ -116,10 +111,6 @@ public class DashboardFragment extends Fragment {
 
             user = mainActivity.user;
             assert user != null;
-
-            // Set Up BMR
-            calculateBMR();
-            setupBMRdesc(view);
             // Set Up BMI
             setupBMI(view);
             // Set Up Intake Display
@@ -135,9 +126,6 @@ public class DashboardFragment extends Fragment {
         }
         return view;
     }
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -411,13 +399,5 @@ public class DashboardFragment extends Fragment {
         double HxH = heightInM * heightInM;
         bmi = weight / HxH;
         return bmi;
-    }
-    // BMR Functions
-    private void setupBMRdesc(View view) {
-        TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
-        txtBMR.setText("Your approximate BMR: " + bmr);
-    }
-    private void calculateBMR() {
-        //
     }
 }
