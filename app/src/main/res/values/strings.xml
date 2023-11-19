@@ -86,6 +86,9 @@
     <string name="new_age">New Age</string>
     <string name="update_btn">Update</string>
     <string name="new_age_hint">new age</string>
+    <string name="enter_your_new_height">Enter your new height</string>
+    <string name="new_height">new height</string>
+    <string name="new_height_cm">new height (cm)</string>
 
 
 </resources>

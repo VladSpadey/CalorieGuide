@@ -105,6 +105,7 @@ public class WeightFragment extends Fragment {
     }
 
     private void runWeightFragment() {
+        Log.d("Weight Fragment", "data: " + mainActivity.userData);
         // User Data
         user = mainActivity.user;
         uID = (String) mainActivity.userData.get("uid");
@@ -116,7 +117,7 @@ public class WeightFragment extends Fragment {
         activityLevel = mainActivity.activityLevel;
         sex = mainActivity.sex;
         overlay = view.findViewById(R.id.overlay);
-        setupBMRdesc();
+        updateBMR();
         if (!isChartLoading) {
             isChartLoading = true;
         }
@@ -227,11 +228,11 @@ public class WeightFragment extends Fragment {
         updatedBMR = round(BMR * activityLevel);
         mainActivity.userData.put("activityBmr", (Long) updatedBMR);
         dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
-        setupBMRdesc();
+        setupBMRdesc(updatedBMR);
     }
     // BMR Functions
-    private void setupBMRdesc() {
+    private void setupBMRdesc(long updatedBMR) {
         TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
-        txtBMR.setText("Your approximate BMR: " + bmr);
+        txtBMR.setText("Your approximate BMR: " + updatedBMR);
     }
 }
