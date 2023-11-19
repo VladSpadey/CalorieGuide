@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -104,6 +105,7 @@ public class WeightFragment extends Fragment {
     }
 
     private void runWeightFragment() {
+        Log.d("Weight Fragment", "data: " + mainActivity.userData);
         // User Data
         user = mainActivity.user;
         uID = (String) mainActivity.userData.get("uid");
@@ -115,6 +117,7 @@ public class WeightFragment extends Fragment {
         activityLevel = mainActivity.activityLevel;
         sex = mainActivity.sex;
         overlay = view.findViewById(R.id.overlay);
+        updateBMR();
         if (!isChartLoading) {
             isChartLoading = true;
         }
@@ -225,6 +228,11 @@ public class WeightFragment extends Fragment {
         updatedBMR = round(BMR * activityLevel);
         mainActivity.userData.put("activityBmr", (Long) updatedBMR);
         dbUtil.addIntToDb("activityBmr", (int) updatedBMR);
+        setupBMRdesc(updatedBMR);
     }
-
+    // BMR Functions
+    private void setupBMRdesc(long updatedBMR) {
+        TextView txtBMR = view.findViewById(R.id.dashboard_txtBMR);
+        txtBMR.setText("Your approximate BMR: " + updatedBMR);
+    }
 }

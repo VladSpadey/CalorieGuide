@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.calorieguide.Utils.dbUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -26,27 +27,32 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
 
 public class SettingsFragment extends Fragment {
-    Button btn_logout, btn_deleteUser;
+    Button btn_age, btn_height, btn_logout, btn_deleteUser;
     FirebaseUser user;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     View overlay;
     String uID, email;
-    Boolean userDeleted;
+    MainActivity mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
         user = mainActivity.user;
         uID = mainActivity.uIDDB;
         email = mainActivity.email;
 
         overlay = view.findViewById(R.id.overlay);
+        btn_age = view.findViewById(R.id.btn_ChangeUserAge);
+        btn_height = view.findViewById(R.id.btn_ChangeUserHeight);
         btn_logout = view.findViewById(R.id.btn_logout);
         btn_deleteUser = view.findViewById(R.id.btn_deleteUser);
+
+        changeAgeListener();
+        changeHeightListener();
         btn_logoutListener();
         btn_changePasswordListener();
         btn_deleteUserListener();
@@ -54,6 +60,78 @@ public class SettingsFragment extends Fragment {
         return view;
     }
 
+    private void changeAgeListener() {
+        btn_age.setOnClickListener(vi->{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
+            View viewDialog = getLayoutInflater().inflate(R.layout.dialog_change_age, null);
+
+            final ImageButton closeDialog  = viewDialog.findViewById(R.id.close_dialog_btn);
+            Button updateAge = viewDialog.findViewById(R.id.btn_update_age);
+            EditText newAge_input = viewDialog.findViewById(R.id.input_age);
+
+            alertDialogBuilder.setView(viewDialog);
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+            overlay.setVisibility(View.VISIBLE);
+
+            updateAge.setOnClickListener(v->{
+                String ageText = newAge_input.getText().toString();
+                if (!ageText.isEmpty()){
+                    double newAge = Double.parseDouble(ageText);
+                    dbUtil.addDoubleToDb("age", newAge);
+                    mainActivity.userData.put("age", newAge);
+                    Toast.makeText(mainActivity, "Age Successfully Updated", Toast.LENGTH_SHORT).show();
+                    alertDialog.dismiss();
+                } else {
+                    Toast.makeText(mainActivity, "Please enter a valid age", Toast.LENGTH_SHORT).show();
+                }
+
+
+            });
+
+            closeDialog.setOnClickListener(v -> alertDialog.dismiss());
+            alertDialog.setOnDismissListener(v -> overlay.setVisibility(View.GONE));
+            alertDialog.show();
+        });
+    }
+    private void changeHeightListener() {
+        btn_height.setOnClickListener(vi->{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
+            View viewDialog = getLayoutInflater().inflate(R.layout.dialog_change_height, null);
+
+            final ImageButton closeDialog  = viewDialog.findViewById(R.id.close_dialog_btn);
+            Button updateHeight = viewDialog.findViewById(R.id.btn_update_height);
+            EditText newHeight_input = viewDialog.findViewById(R.id.input_height);
+
+            alertDialogBuilder.setView(viewDialog);
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+            overlay.setVisibility(View.VISIBLE);
+
+            updateHeight.setOnClickListener(v->{
+                String heightText = newHeight_input.getText().toString();
+                if (!heightText.isEmpty()){
+                    double newHeight = Double.parseDouble(heightText);
+                    if (newHeight <= 10){
+                        Toast.makeText(mainActivity, "Please enter your height in centimeters", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d("Old", "changeHeightListener: " + mainActivity.userData);
+                        dbUtil.addDoubleToDb("height", newHeight);
+                        mainActivity.userData.put("height", newHeight);
+                        Log.d("New", "changeHeightListener: " + mainActivity.userData);
+                        Toast.makeText(mainActivity, "Height set to " + newHeight + "cm.", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                } else {
+                    Toast.makeText(mainActivity, "Please enter a valid age", Toast.LENGTH_SHORT).show();
+                }
+
+
+            });
+
+            closeDialog.setOnClickListener(v -> alertDialog.dismiss());
+            alertDialog.setOnDismissListener(v -> overlay.setVisibility(View.GONE));
+            alertDialog.show();
+        });
+    }
     private void btn_deleteUserListener() {
         btn_deleteUser.setOnClickListener(v -> {
             showDeleteDialog();

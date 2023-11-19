@@ -65,6 +65,48 @@
 
     </RelativeLayout>
 
+    <!-- BMR Layout -->
+
+    <RelativeLayout
+        android:id="@+id/weight_layout_bmr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/round_corners_dialog"
+        android:layout_below="@id/layout_weight"
+        android:layout_marginTop="15dp"
+        >
+
+        <TextView
+            android:id="@+id/dashboard_txtBMR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="@string/your_approximate_bmr"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="@color/white"
+            android:textSize="19sp"
+            android:paddingTop="20dp"/>
+
+        <TextView
+            android:id="@+id/dashboard_txtBMRdescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dashboard_txtBMR"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="30dp"
+            android:text="@string/bmr_description"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
     <!-- Loading Bar -->
     <ProgressBar
         android:id="@+id/loadingBar_weight"

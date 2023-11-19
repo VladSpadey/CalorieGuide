@@ -48,15 +48,45 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="19sp"/>
 
-            <com.anychart.AnyChartView
-                android:id="@+id/intake_pie_view"
-                android:layout_width="175dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="25dp"
-                android:layout_below="@+id/dashboard_txtCalorieIntake"/>
+
+            <RelativeLayout
+                android:id="@+id/pie_charts_relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dashboard_txtCalorieIntake">
+
+                <com.anychart.AnyChartView
+                    android:id="@+id/intake_pie_view"
+                    android:layout_width="165dp"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/txt_eaten"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text=""
+                    android:layout_below="@+id/intake_pie_view"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <com.anychart.AnyChartView
+                    android:id="@+id/details_pie_view"
+                    android:layout_width="165dp"
+                    android:layout_height="300dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_toEndOf="@+id/intake_pie_view" />
+
+            </RelativeLayout>
 
             <ProgressBar
                 android:id="@+id/intake_progress_bar"
@@ -66,19 +96,13 @@
                 android:layout_marginTop="100dp"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/txt_eaten"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/intake_pie_view"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:paddingBottom="15dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
+            <ProgressBar
+                android:id="@+id/details_progress_bar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="240dp"
+                android:layout_marginTop="100dp"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- BMI Layout -->
@@ -132,7 +156,7 @@
                 android:textColor="@color/white"
                 android:layout_below="@id/dashboard_txtBMI"
                 android:textSize="19sp"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:visibility="gone"/>
 
             <TextView
@@ -145,52 +169,12 @@
                 android:layout_marginEnd="15dp"
                 android:textColor="@color/white"
                 android:layout_below="@id/dashboard_txtBMICategory_health"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:textSize="19sp"
                 android:layout_marginBottom="15dp"/>
 
         </RelativeLayout>
 
-        <!-- BMR Layout -->
-        <RelativeLayout
-            android:id="@+id/dashboard_layout_bmr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/round_corners_dialog"
-            android:layout_below="@id/dashboard_layout_bmi"
-            android:layout_marginTop="15dp"
-            >
-
-            <TextView
-                android:id="@+id/dashboard_txtBMR"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/your_approximate_bmr"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/white"
-                android:textSize="19sp"
-                android:paddingTop="20dp"/>
-
-            <TextView
-                android:id="@+id/dashboard_txtBMRdescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/dashboard_txtBMR"
-                android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="30dp"
-                android:text="@string/bmr_description"
-                android:textColor="@color/white"
-                android:textSize="17sp" />
-
-        </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/loadingBar"
@@ -206,7 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:layout_alignParentBottom="true"
-            android:layout_below="@+id/dashboard_layout_bmr"
+            android:layout_below="@+id/dashboard_layout_bmi"
             android:layout_marginTop="12dp"
             />
     </RelativeLayout>
