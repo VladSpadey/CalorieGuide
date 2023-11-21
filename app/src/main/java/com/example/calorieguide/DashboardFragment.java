@@ -262,18 +262,16 @@ public class DashboardFragment extends Fragment {
                     detailsPie.legend().useHtml(true);
 
                     String itemsFormat = "function() {" +
-                               /* "var percent = this.getStat('percentValue');" +
-                                "percent = percent.toFixed(0);" +*/
-                                "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + this.value + 'mg</span>'; }";
+                                "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + this.value + 'g</span>'; }";
+
+                    if (totalProtein > 0 & totalCarbs > 0 & totalFats > 0 & totalFiber > 0){
+                        itemsFormat = "function() {" +
+                                "var percent = this.getStat('percentValue');" +
+                                "percent = percent.toFixed(0);" +
+                                "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
+                    }
 
                     detailsPie.legend().itemsFormat(itemsFormat);
-                    /*
-                    Log.d("Chart", "details: protein: " + totalProtein + ". carbs: " + totalCarbs + ". Fats: " + totalFats + ". Fiber: " + totalFiber);
-                    String itemsFormat = "function() {" +
-                            "var percent = this.getStat('percentValue');" +
-                            "percent = percent.toFixed(0);" +
-                            "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
-                    detailsPie.legend().itemsFormat(itemsFormat);*/
 
                     if (food_details_anyChartView != null && isDetailsPieChartLoading) {
                         food_details_anyChartView.setChart(detailsPie);
