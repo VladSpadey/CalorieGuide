@@ -138,17 +138,14 @@ public class WeightFragment extends Fragment {
     }
 
     private void setupChart(List<DataEntry> data) {
-        if(isChartLoading){
+        if (isChartLoading) {
             chartView = view.findViewById(R.id.weight_chart_view);
             chartView.setProgressBar(view.findViewById(R.id.weight_progress_bar));
 
-            if(chartView != null){
+            if (chartView != null) {
                 cartesian = AnyChart.line();
                 cartesian.padding(10d, 20d, 5d, 20d);
-                cartesian.crosshair().enabled(true);
-                cartesian.crosshair()
-                        .yLabel(true)
-                        .yStroke((Stroke) null, null, null, (String) null, (String) null);
+                cartesian.crosshair().enabled(false);
 
                 cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
                 cartesian.background().fill("#111111");

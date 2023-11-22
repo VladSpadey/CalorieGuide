@@ -94,7 +94,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateWeightValues(){
-        weightChartValues = dbUtil.getWeightChartValues();
+        dbUtil.getWeightChartValues(new dbUtil.OnDataFetchListener() {
+            @Override
+            public void onDataFetchSuccess(List<DataEntry> data) {
+                weightChartValues = data;
+            }
+
+            @Override
+            public void onDataFetchFailure(String errorMessage) {
+            }
+        });
     }
 
     private void replaceFragment(Fragment fragment) {
