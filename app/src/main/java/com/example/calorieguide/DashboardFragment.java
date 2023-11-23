@@ -3,6 +3,7 @@ package com.example.calorieguide;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -217,10 +218,10 @@ public class DashboardFragment extends Fragment {
                 food_details_anyChartView.setProgressBar(view.findViewById(R.id.details_progress_bar));
                 APIlib.getInstance().setActiveAnyChartView(food_details_anyChartView);
 
-                Long totalProtein = 0L;
-                Long totalCarbs = 0L;
-                Long totalFats = 0L;
-                Long totalFiber = 0L;
+                int totalProtein = 0;
+                int totalCarbs = 0;
+                int totalFats = 0;
+                int totalFiber = 0;
                 List<DataEntry> data = new ArrayList<>();
                 List<Map<String, Object>> intake = mainActivity.intakeReceived;
                 for (Map<String, Object> item : intake) {
@@ -259,10 +260,16 @@ public class DashboardFragment extends Fragment {
                             .align(Align.BOTTOM)
                             .itemsSpacing(5);
                     detailsPie.legend().useHtml(true);
+
                     String itemsFormat = "function() {" +
-                            "var percent = this.getStat('percentValue');" +
-                            "percent = percent.toFixed(0);" +
-                            "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
+                                "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + this.value + 'g</span>'; }";
+
+                    if (totalProtein > 0 & totalCarbs > 0 & totalFats > 0 & totalFiber > 0){
+                        itemsFormat = "function() {" +
+                                "var percent = this.getStat('percentValue');" +
+                                "percent = percent.toFixed(0);" +
+                                "return '<span style=\"color: #adb5bd; font-weight: bold;\">' + this.x + '</span>' + ': <span style=\"color: white; font-weight: bold; font-size: 14;\">' + percent + '%</span>'; }";
+                    }
 
                     detailsPie.legend().itemsFormat(itemsFormat);
 

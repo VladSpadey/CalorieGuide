@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,23 +182,39 @@ public class dbUtil {
                     // Handle the error
                 });
     }
-    public static List<DataEntry> getWeightChartValues() {
+    public static void getWeightChartValues(OnDataFetchListener listener) {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         CollectionReference weightCollectionRef = db.collection("users").document(user.getUid()).collection("weights");
-        List<DataEntry> chartData= new ArrayList<>();
+        List<DataEntry> chartData = new ArrayList<>();
+
         weightCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String date = document.getString("date");
+                        String dateString = document.getString("date");
+                        // Convert string to Date
+                        Date date = convertStringToDate(dateString);
                         double weight = document.getDouble("weight");
-                        chartData.add(new ValueDataEntry(date, weight));
+                        chartData.add(new ValueDataEntry(dateString, weight));
                     }
+                    listener.onDataFetchSuccess(chartData);
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error here, e.g., log the error or display an error message.
-                    // You can access the error message with e.getMessage().
+                    listener.onDataFetchFailure(e.getMessage());
                 });
-        return chartData;
+    }
+    public interface OnDataFetchListener {
+        void onDataFetchSuccess(List<DataEntry> data);
+        void onDataFetchFailure(String errorMessage);
+    }
+    private static Date convertStringToDate(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+            return sdf.parse(dateString);
+        } catch (ParseException e) {
+            // Handle the parse exception, e.g., log the error
+            e.printStackTrace();
+            return null;
+        }
     }
 }
